@@ -11,7 +11,7 @@
         android:icon="@android:drawable/ic_menu_compass"
         android:label="TrueTrade Signals"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.NoActionBar">
+        android:theme="@style/Theme.TrueTrade">
 
         <activity
             android:name=".MainActivity"

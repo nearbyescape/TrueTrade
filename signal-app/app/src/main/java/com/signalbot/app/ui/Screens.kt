@@ -1,7 +1,8 @@
 package com.signalbot.app.ui
 
-import android.content.Intent
-import android.provider.Settings
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,261 +11,345 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.signalbot.app.MainViewModel
 import com.signalbot.app.data.ActionView
 import com.signalbot.app.data.AssetView
-import com.signalbot.engine.model.Assets
+import com.signalbot.app.data.ScanResult
+import com.signalbot.app.ui.theme.Palette
+import com.signalbot.app.ui.theme.Type
+import com.signalbot.engine.model.Asset
 import com.signalbot.engine.strategy.formatPrice
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val longColor = Color(0xFF2E9E6B)
-private val shortColor = Color(0xFFD0573E)
-private val timeFmt = DateTimeFormatter.ofPattern("dd MMM, HH:mm", Locale.US)
-private val dateFmt = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.US)
+private val dayFmt = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.US)
+private val shortDayFmt = DateTimeFormatter.ofPattern("d MMM", Locale.US)
+private val clockFmt = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
+private fun zoned(ms: Long, zone: ZoneId) = Instant.ofEpochMilli(ms).atZone(zone)
 
-private fun time(ms: Long) = timeFmt.format(Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()))
-private fun date(ms: Long) = dateFmt.format(Instant.ofEpochMilli(ms).atZone(ZoneId.systemDefault()))
-private fun r(v: Double) = if (v.isNaN()) "-" else String.format(Locale.US, "%+.2fR", v)
-private fun pct(v: Double) = if (v.isNaN()) "-" else String.format(Locale.US, "%.0f%%", v * 100)
+private val numberWords = listOf("No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten")
 
-@Composable
-private fun Title(text: String) {
-    Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(top = 8.dp))
+/** "No orders for today's open." / "Two orders for today's open." */
+fun headline(n: Int): String {
+    val count = numberWords.getOrNull(n) ?: n.toString()
+    return "$count order${if (n == 1) "" else "s"} for today's open."
 }
 
-// ------------------------------------------------------------------------------------------ Today
+private val screenPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 28.dp, bottom = 32.dp)
 
 @Composable
-fun TodayScreen(vm: MainViewModel) {
-    val scan = vm.scan
+private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
+    Text(text, style = Type.Title, color = Palette.Cream, modifier = modifier.padding(top = 20.dp, bottom = 4.dp))
+}
+
+@Composable
+private fun GoldAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(50)
+    Text(
+        text,
+        style = Type.BodyStrong,
+        color = if (enabled) Palette.Gold else Palette.Lichen,
+        modifier = Modifier
+            .clip(shape)
+            .border(1.dp, if (enabled) Palette.Gold else Palette.Moss, shape)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 18.dp, vertical = 9.dp),
+    )
+}
+
+// ================================================================================== Today
+
+@Composable
+fun TodayContent(
+    scan: ScanResult?,
+    scanning: Boolean,
+    message: String?,
+    onCheck: () -> Unit,
+    nowMs: Long = System.currentTimeMillis(),
+    zone: ZoneId = ZoneId.systemDefault(),
+) {
     val actions = scan?.assets?.flatMap { it.actions }.orEmpty()
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item {
             Column {
-                Text("TrueTrade Signals", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                Text(if (scan == null) "No scan yet" else "Last scan ${time(scan.timeMs)}",
-                    style = MaterialTheme.typography.bodySmall)
+                Text(dayFmt.format(zoned(nowMs, zone)), style = Type.Small, color = Palette.Lichen)
+                Spacer(Modifier.height(6.dp))
+                Text(if (scan == null) "Not checked yet." else headline(actions.size), style = Type.Headline, color = Palette.Cream)
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = { vm.scanNow() }, enabled = !vm.scanning) {
-                    Text(if (vm.scanning) "Scanning..." else "Scan now")
-                }
-                vm.message?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-                Spacer(Modifier.height(4.dp))
-                Text("New signals come after the daily close at 05:30 IST. Act at the next open.",
-                    style = MaterialTheme.typography.bodySmall)
+                Text(
+                    if (scan == null) "Check now to load today's signals."
+                    else "Checked at ${clockFmt.format(zoned(scan.timeMs, zone))}. New signals come after each daily close at 05:30.",
+                    style = Type.Small, color = Palette.Lichen,
+                )
+                message?.let { Text(it, style = Type.Small, color = Palette.Warning, modifier = Modifier.padding(top = 6.dp)) }
+                Spacer(Modifier.height(14.dp))
+                GoldAction(if (scanning) "Checking..." else "Check now", enabled = !scanning, onClick = onCheck)
             }
         }
-        item { Title("Today's actions") }
-        if (actions.isEmpty()) {
-            item { Text("Nothing to do today.") }
-        } else {
-            items(actions) { ActionCard(it) }
-        }
-        item { Title("Open legs and stops") }
+        items(actions) { OrderTicket(it) }
         if (scan != null) {
-            items(scan.assets) { AssetCard(it) }
+            item { SectionTitle("Positions") }
+            items(scan.assets) { PositionRow(it) }
         }
     }
 }
 
 @Composable
-fun ActionCard(a: ActionView) {
-    val color = if (a.direction == "LONG") longColor else shortColor
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(12.dp)) {
-            Text("${a.assetName}: ${a.action} ${a.direction}, ${a.leg}-day leg", color = color, fontWeight = FontWeight.Bold)
-            if (a.action == "ENTER") {
-                Text("Enter at the next open (about ${formatPrice(a.close)}). Stop ${formatPrice(a.stop)}")
-            } else {
-                Text("Close this leg at the next open.")
-            }
-            a.sizeText?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-            a.reasons.forEach { Text("- $it", style = MaterialTheme.typography.bodySmall) }
+fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
+    var expanded by remember { mutableStateOf(initiallyExpanded) }
+    val entering = a.actions.filter { it.action == "ENTER" }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { expanded = !expanded }
+            .animateContentSize()
+            .padding(vertical = 10.dp),
+    ) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(a.name, style = Type.Name, color = Palette.Cream, modifier = Modifier.weight(1f))
+            Text(if (a.close.isNaN()) "" else formatPrice(a.close), style = Type.Figure, color = Palette.Cream)
         }
-    }
-}
-
-@Composable
-fun AssetCard(a: AssetView) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(12.dp)) {
-            Text("${a.name}  ${if (a.close.isNaN()) "" else formatPrice(a.close)}", style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold)
-            if (a.error != null) {
-                Text("Couldn't load: ${a.error}", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-            } else if (a.open.isEmpty()) {
-                Text("No open legs", style = MaterialTheme.typography.bodySmall)
-            }
-            a.open.forEach { o ->
-                val color = if (o.direction == "LONG") longColor else shortColor
-                Spacer(Modifier.height(4.dp))
-                Text("${o.direction} ${o.leg}-day leg since ${date(o.sinceMs)}: ${r(o.rNow)}", color = color)
-                Text("Stop now ${formatPrice(o.stop)}. Exit only if a daily close is ${if (o.direction == "LONG") "below" else "above"} it.",
-                    style = MaterialTheme.typography.bodySmall)
-            }
-            if (a.source.isNotEmpty()) {
-                Text("Daily close ${date(a.closeTimeMs - 1)}, data: ${a.source}", style = MaterialTheme.typography.labelSmall)
-            }
-        }
-    }
-}
-
-// ------------------------------------------------------------------------------------------ Results
-
-@Composable
-fun ResultsScreen(vm: MainViewModel) {
-    val scan = vm.scan
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item {
-            Column {
-                Text("Paper results", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                Text("What the strategy did by itself over the last 180 days, closed legs only, after 0.08% costs per side (funding not included).",
-                    style = MaterialTheme.typography.bodySmall)
-            }
-        }
-        if (scan == null) {
-            item { Text("Run a scan first.") }
+        Spacer(Modifier.height(8.dp))
+        if (a.error != null) {
+            Text("Prices didn't load: ${a.error}. Check again in a minute.", style = Type.Small, color = Palette.Warning)
         } else {
-            val all = scan.assets.mapNotNull { it.paper?.let { p -> it.name to p } }
-            val trades = all.sumOf { it.second.trades }
-            val total = all.sumOf { it.second.totalR }
+            LegRail(a.open, entering)
+            Spacer(Modifier.height(10.dp))
+            StopLadder(a.close, a.open)
+            Text(summary(a), style = Type.Small, color = Palette.Lichen, modifier = Modifier.padding(top = 2.dp))
+        }
+        if (expanded && a.error == null) {
+            Spacer(Modifier.height(12.dp))
+            PriceLine(a.closes, a.open)
+            Text("Last ${a.closes.size} daily closes. Dashed lines are your stops.", style = Type.Tiny, color = Palette.Lichen)
+            a.open.forEach { o ->
+                Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("${o.leg}-day ${o.direction.lowercase()}", style = Type.BodyStrong, color = Palette.direction(o.direction),
+                        modifier = Modifier.width(118.dp))
+                    Text("stop ${formatPrice(o.stop)}", style = Type.Small, color = Palette.Cream, modifier = Modifier.weight(1f))
+                    Text(rText(o.rNow), style = Type.Small, color = if (o.rNow >= 0) Palette.Long else Palette.Short)
+                }
+            }
+            Text("Exit a leg only when a daily close crosses its stop.", style = Type.Tiny, color = Palette.Lichen,
+                modifier = Modifier.padding(top = 8.dp))
+        }
+        HorizontalDivider(Modifier.padding(top = 14.dp), color = Palette.Moss)
+    }
+}
+
+private fun summary(a: AssetView): String {
+    if (a.open.isEmpty()) return if (a.actions.isEmpty()) "Flat. No legs open." else "Flat until the next open."
+    val dirs = a.open.groupBy { it.direction }
+    val parts = dirs.map { (d, legs) -> "${numberWords.getOrNull(legs.size)?.lowercase() ?: legs.size} ${d.lowercase()}" }
+    val best = a.open.maxOf { it.rNow }
+    return "${parts.joinToString(" and ")}, best leg ${rText(best)}"
+}
+
+// ================================================================================== Record
+
+@Composable
+fun RecordContent(scan: ScanResult?) {
+    val rows = scan?.assets?.mapNotNull { a -> a.paper?.let { a.name to it } }.orEmpty()
+    val legs = rows.sumOf { it.second.trades }
+    val total = rows.sumOf { it.second.totalR }
+    val maxAbs = rows.maxOfOrNull { kotlin.math.abs(it.second.totalR) } ?: 0.0
+    LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        item {
+            Column {
+                Text("What the strategy did by itself over the last 180 days", style = Type.Small, color = Palette.Lichen)
+                Spacer(Modifier.height(6.dp))
+                if (scan == null) {
+                    Text("Nothing to show until the first check.", style = Type.Headline, color = Palette.Cream)
+                } else {
+                    Text(rText(total), style = Type.BigFigure, color = if (total >= 0) Palette.Long else Palette.Short)
+                    Text("from $legs closed legs, after fees and slippage", style = Type.Body, color = Palette.Cream)
+                }
+            }
+        }
+        items(rows) { (name, p) ->
+            Column(Modifier.fillMaxWidth().padding(top = 6.dp)) {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(name, style = Type.Name, color = Palette.Cream, modifier = Modifier.weight(1f))
+                    Text(rText(p.totalR), style = Type.Figure, color = if (p.totalR >= 0) Palette.Long else Palette.Short)
+                }
+                Spacer(Modifier.height(6.dp))
+                RBar(p.totalR, maxAbs)
+                Text(
+                    if (p.trades == 0) "No closed legs in this period."
+                    else "${p.trades} legs, ${String.format(Locale.US, "%.0f", p.winRate * 100)}% won, ${rText(p.avgR)} on average",
+                    style = Type.Small, color = Palette.Lichen, modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
+        item {
+            Column(Modifier.padding(top = 10.dp)) {
+                SectionTitle("The longer test")
+                Text(
+                    "On Binance futures from July 2023 to November 2026, these rules closed 284 legs on your five assets: " +
+                        "about seven a month, 43% winners, +0.64R on average. The months it had never seen averaged +0.35R.",
+                    style = Type.Body, color = Palette.Cream,
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Expect losing runs. Legs on one asset lose together; the worst run was 27 legs, about 15% at 0.5% risk per leg.",
+                    style = Type.Small, color = Palette.Lichen,
+                )
+            }
+        }
+    }
+}
+
+// ================================================================================== Journal
+
+@Composable
+fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefault()) {
+    val byDay = journal.groupBy { zoned(it.timeMs - 1, zone).toLocalDate() }.toSortedMap(compareByDescending { it })
+    LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        item {
+            Column {
+                Text("Every order the app has given you", style = Type.Small, color = Palette.Lichen)
+                Text("Journal", style = Type.Headline, color = Palette.Cream)
+            }
+        }
+        if (journal.isEmpty()) {
+            item { Text("Orders appear here after the first signal.", style = Type.Body, color = Palette.Lichen) }
+        }
+        byDay.forEach { (date, entries) ->
             item {
-                Card(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(12.dp)) {
-                        Text("All assets: $trades legs, total ${r(total)}", fontWeight = FontWeight.Bold)
-                        if (trades > 0) Text("Average ${r(total / trades)} per leg")
+                Text(shortDayFmt.format(date), style = Type.Name, color = Palette.Cream, modifier = Modifier.padding(top = 16.dp))
+            }
+            items(entries) { a ->
+                Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
+                    Text(
+                        "${a.leg}d",
+                        style = Type.Tiny,
+                        color = Palette.direction(a.direction),
+                        modifier = Modifier
+                            .width(40.dp)
+                            .padding(top = 3.dp)
+                            .border(1.dp, Palette.direction(a.direction).copy(alpha = 0.6f), RoundedCornerShape(5.dp))
+                            .padding(vertical = 2.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("${a.assetName}: ${verb(a).lowercase().replaceFirstChar { it.uppercase() }}", style = Type.BodyStrong, color = Palette.Cream)
+                        Text(
+                            if (a.action == "ENTER") "Close ${formatPrice(a.close)}, stop ${formatPrice(a.stop)}"
+                            else "Close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}",
+                            style = Type.Small, color = Palette.Lichen,
+                        )
                     }
                 }
-            }
-            items(all) { (name, p) ->
-                Card(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(12.dp)) {
-                        Text(name, fontWeight = FontWeight.SemiBold)
-                        Text("${p.trades} legs, win rate ${pct(p.winRate)}, average ${r(p.avgR)}, total ${r(p.totalR)}")
-                    }
-                }
-            }
-        }
-        item {
-            Column {
-                Title("Backtest (Jul 2023 to Nov 2026)")
-                Text("Your 5 assets on Binance futures: 284 legs, about 7 a month, 43% winners, +0.64R average, profit factor 2.25. " +
-                    "Unseen period from Jul 2025: +0.35R average. Worst drawdown 15.6% at 0.5% risk per leg. Losing streaks of 20+ legs happen.",
-                    style = MaterialTheme.typography.bodySmall)
             }
         }
     }
 }
 
-// ------------------------------------------------------------------------------------------ Journal
+// ================================================================================== Settings
+
+data class SettingsState(val capital: String, val riskPerLeg: String, val leverage: String, val enabled: Map<String, Boolean>)
 
 @Composable
-fun JournalScreen(vm: MainViewModel) {
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        item {
-            Column {
-                Text("Journal", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                Text("Every leg action the app has signalled, newest first.", style = MaterialTheme.typography.bodySmall)
-            }
-        }
-        if (vm.journal.isEmpty()) item { Text("Nothing yet.") }
-        items(vm.journal) { a ->
-            Column {
-                Text("${date(a.timeMs - 1)}  ${a.assetName}: ${a.action} ${a.direction} ${a.leg}d",
-                    color = if (a.direction == "LONG") longColor else shortColor)
-                Text("Close ${formatPrice(a.close)}, stop ${formatPrice(a.stop)}", style = MaterialTheme.typography.bodySmall)
-                HorizontalDivider(Modifier.padding(top = 6.dp))
-            }
-        }
-    }
-}
-
-// ------------------------------------------------------------------------------------------ Settings
-
-@Composable
-fun SettingsScreen(vm: MainViewModel) {
-    val s = vm.settings
-    val context = LocalContext.current
-    var capital by remember { mutableStateOf(s.capital.toString()) }
-    var risk by remember { mutableStateOf(s.riskPerLegPct.toString()) }
-    var leverage by remember { mutableStateOf(s.leverage.toString()) }
+fun SettingsContent(
+    initial: SettingsState,
+    assets: List<Asset>,
+    onSave: (SettingsState) -> SettingsState,
+    onToggle: (String, Boolean) -> Unit,
+    onBatterySettings: () -> Unit,
+) {
+    var capital by remember { mutableStateOf(initial.capital) }
+    var risk by remember { mutableStateOf(initial.riskPerLeg) }
+    var leverage by remember { mutableStateOf(initial.leverage) }
+    var enabled by remember { mutableStateOf(initial.enabled) }
     var saved by remember { mutableStateOf(false) }
-    val enabled = remember { mutableStateMapOf<String, Boolean>().apply { Assets.DEFAULT.forEach { put(it.id, s.isEnabled(it.id)) } } }
-
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        item { Text("Settings", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold) }
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Palette.Gold, unfocusedBorderColor = Palette.Moss, focusedLabelColor = Palette.Gold,
+        unfocusedLabelColor = Palette.Lichen, cursorColor = Palette.Gold, focusedTextColor = Palette.Cream, unfocusedTextColor = Palette.Cream,
+    )
+    LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item { Text("Settings", style = Type.Headline, color = Palette.Cream) }
+        item { SectionTitle("Position size") }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(value = capital, onValueChange = { capital = it; saved = false }, label = { Text("Capital") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = risk, onValueChange = { risk = it; saved = false }, label = { Text("Risk per leg, % (0.5 suggested)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = leverage, onValueChange = { leverage = it; saved = false }, label = { Text("Leverage (1-3 suggested)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
-                Button(onClick = {
-                    capital.toDoubleOrNull()?.takeIf { it > 0 }?.let { s.capital = it }
-                    risk.toDoubleOrNull()?.takeIf { it > 0 && it <= 5 }?.let { s.riskPerLegPct = it }
-                    leverage.toDoubleOrNull()?.takeIf { it >= 1 && it <= 20 }?.let { s.leverage = it }
-                    capital = s.capital.toString(); risk = s.riskPerLegPct.toString(); leverage = s.leverage.toString()
-                    saved = true
-                }) { Text("Save") }
-                if (saved) Text("Saved. Sizes update on the next scan.", style = MaterialTheme.typography.bodySmall)
-            }
-        }
-        item { Title("Assets") }
-        items(Assets.DEFAULT) { asset ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(asset.displayName)
-                    Text(asset.routes.first().toString(), style = MaterialTheme.typography.labelSmall)
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedTextField(capital, { capital = it; saved = false }, label = { Text("Capital") }, colors = fieldColors,
+                    textStyle = Type.Figure, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(risk, { risk = it; saved = false }, label = { Text("Risk per leg, %") }, colors = fieldColors,
+                    textStyle = Type.Figure, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    supportingText = { Text("0.5% suggested. Up to four legs per asset can be open, so 2% per asset at most.") },
+                    modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(leverage, { leverage = it; saved = false }, label = { Text("Leverage") }, colors = fieldColors,
+                    textStyle = Type.Figure, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    supportingText = { Text("Changes margin, not risk. The app warns if liquidation would come before a stop.") },
+                    modifier = Modifier.fillMaxWidth())
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    GoldAction("Save sizes") {
+                        val s = onSave(SettingsState(capital, risk, leverage, enabled))
+                        capital = s.capital; risk = s.riskPerLeg; leverage = s.leverage
+                        saved = true
+                    }
+                    if (saved) Text("Saved. New sizes show from the next check.", style = Type.Small, color = Palette.Lichen,
+                        modifier = Modifier.padding(start = 14.dp))
                 }
-                Switch(checked = enabled[asset.id] == true, onCheckedChange = { on ->
-                    enabled[asset.id] = on
-                    s.setEnabled(asset.id, on)
-                })
             }
         }
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Title("Reliable background scans")
-                Text("Some phones stop background work to save battery. If signals arrive late, allow this app to run without battery limits.",
-                    style = MaterialTheme.typography.bodySmall)
-                OutlinedButton(onClick = {
-                    context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-                }) { Text("Open battery settings") }
-                Title("Strategy")
-                Text("Version 3 breakout ensemble: 20, 30, 60 and 90-day closing breakouts per asset, 200-day EMA trend filter, " +
-                    "stop at the middle of each range that only moves in your favour, exit on a daily close beyond it. " +
-                    "Not financial advice: paper trade first.", style = MaterialTheme.typography.bodySmall)
+        item { SectionTitle("Assets") }
+        items(assets) { asset ->
+            Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(asset.displayName, style = Type.Name, color = Palette.Cream)
+                    Text("${asset.routes.first().symbol} perpetual on Binance, Bybit as backup", style = Type.Small, color = Palette.Lichen)
+                }
+                Switch(
+                    checked = enabled[asset.id] == true,
+                    onCheckedChange = { on -> enabled = enabled + (asset.id to on); onToggle(asset.id, on) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Palette.ForestNight, checkedTrackColor = Palette.Gold,
+                        uncheckedThumbColor = Palette.Lichen, uncheckedTrackColor = Palette.Canopy, uncheckedBorderColor = Palette.Moss,
+                    ),
+                )
             }
+        }
+        item { SectionTitle("Background checks") }
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("The app checks after 05:30 every morning and every three hours after that. Some phones pause apps to save battery; " +
+                    "if signals arrive late, let this app run without battery limits.", style = Type.Body, color = Palette.Cream)
+                GoldAction("Open battery settings", onClick = onBatterySettings)
+            }
+        }
+        item { SectionTitle("How it decides") }
+        item {
+            Text(
+                "Each asset has four legs: 20, 30, 60 and 90 days. A leg buys when the daily close is the highest of its period and " +
+                    "above the 200-day average, or sells short on the mirror image. Its stop sits at the middle of that period's closing " +
+                    "range and only moves your way. A leg closes when a daily close crosses its stop. Not financial advice: paper trade first.",
+                style = Type.Small, color = Palette.Lichen,
+            )
         }
     }
 }

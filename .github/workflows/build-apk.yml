@@ -45,6 +45,14 @@ jobs:
           files: signal-app/app/build/outputs/apk/debug/app-debug.apk
           make_latest: true
 
+      # Renders every screen to PNG for design review. Never blocks the APK.
+      - name: Render screenshots
+        continue-on-error: true
+        working-directory: signal-app
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon :app:recordRoborazziDebug 2>&1 | tee "$GITHUB_WORKSPACE/screenshots.log"
+
       # Saves the full build log (pass or fail) to the 'ci-logs' branch, so it can be read without logging in.
       # Runs LAST: it clears the working folder.
       - name: Publish build log
@@ -54,6 +62,10 @@ jobs:
           cp build.log /tmp/build.log 2>/dev/null || echo "no log" > /tmp/build.log
           mkdir -p /tmp/reports
           cp -r signal-app/engine/build/test-results /tmp/reports/ 2>/dev/null || true
+          cp screenshots.log /tmp/reports/ 2>/dev/null || true
+          mkdir -p /tmp/reports/screenshots
+          cp signal-app/app/build/screenshots/*.png /tmp/reports/screenshots/ 2>/dev/null || true
+          cp -r signal-app/app/build/test-results /tmp/reports/app-test-results 2>/dev/null || true
           git config user.name "build-bot"
           git config user.email "build-bot@users.noreply.github.com"
           git checkout --orphan ci-logs

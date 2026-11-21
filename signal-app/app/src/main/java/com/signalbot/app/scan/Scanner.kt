@@ -69,7 +69,8 @@ class Scanner(context: Context) {
             if (closed.isEmpty()) Double.NaN else closed.map { it.netR }.average(),
             closed.sumOf { it.netR })
 
-        AssetView(asset.id, asset.displayName, data.source, d.openTime[last] + Timeframe.D1.millis, close, actions, open, paper, null)
+        val closes = d.close.copyOfRange(maxOf(0, d.size - 120), d.size).toList()
+        AssetView(asset.id, asset.displayName, data.source, d.openTime[last] + Timeframe.D1.millis, close, actions, open, paper, null, closes)
     } catch (e: Exception) {
         AssetView(asset.id, asset.displayName, "", 0, Double.NaN, emptyList(), emptyList(), null, e.message ?: e.javaClass.simpleName)
     }

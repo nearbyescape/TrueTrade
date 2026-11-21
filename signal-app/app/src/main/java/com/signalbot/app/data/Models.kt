@@ -45,6 +45,8 @@ data class AssetView(
     val open: List<OpenLegView>,
     val paper: PaperStats?,
     val error: String?,
+    /** Recent daily closes, oldest first, for the price line. */
+    val closes: List<Double> = emptyList(),
 )
 
 data class ScanResult(val timeMs: Long, val assets: List<AssetView>)
@@ -87,7 +89,8 @@ fun ScanResult.toJson(): JSONObject = JSONObject().put("timeMs", timeMs).put("as
         .put("actions", JSONArray().apply { a.actions.forEach { put(it.toJson()) } })
         .put("open", JSONArray().apply { a.open.forEach { put(it.toJson()) } })
         .put("paper", a.paper?.toJson() ?: JSONObject.NULL)
-        .put("error", a.error ?: JSONObject.NULL))
+        .put("error", a.error ?: JSONObject.NULL)
+        .put("closes", JSONArray().apply { a.closes.forEach { put(it.safe()) } }))
 })
 
 fun scanFromJson(o: JSONObject): ScanResult {
@@ -100,6 +103,7 @@ fun scanFromJson(o: JSONObject): ScanResult {
             a.getJSONArray("open").let { x -> List(x.length()) { openFromJson(x.getJSONObject(it)) } },
             if (a.isNull("paper")) null else paperFromJson(a.getJSONObject("paper")),
             if (a.isNull("error")) null else a.getString("error"),
+            a.optJSONArray("closes")?.let { x -> List(x.length()) { x.optDouble(it) } } ?: emptyList(),
         )
     })
 }
