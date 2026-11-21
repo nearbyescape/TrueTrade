@@ -33,7 +33,20 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon --stacktrace :engine:test :app:assembleDebug 2>&1 | tee "$GITHUB_WORKSPACE/build.log"
 
+      - name: Publish APK release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: TrueTrade Signals build ${{ github.run_number }}
+          body: |
+            Android APK for TrueTrade Signals (strategy version 3, breakout ensemble).
+            Download app-debug.apk below on your phone and open it to install.
+          files: signal-app/app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
+
       # Saves the full build log (pass or fail) to the 'ci-logs' branch, so it can be read without logging in.
+      # Runs LAST: it clears the working folder.
       - name: Publish build log
         if: always()
         run: |
@@ -52,15 +65,3 @@ jobs:
           git add -A
           git commit -m "Build log for ${{ github.sha }} ($STATUS)"
           git push -f origin ci-logs
-
-      - name: Publish APK release
-        if: success()
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: build-${{ github.run_number }}
-          name: TrueTrade Signals build ${{ github.run_number }}
-          body: |
-            Android APK for TrueTrade Signals (strategy version 3, breakout ensemble).
-            Download app-debug.apk below on your phone and open it to install.
-          files: signal-app/app/build/outputs/apk/debug/app-debug.apk
-          make_latest: true
