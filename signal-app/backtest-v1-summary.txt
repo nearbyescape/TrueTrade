@@ -1,0 +1,130 @@
+== Data
+  BTC        2023-01-01 to 2026-11-20, 34080 hours, judged from 2023-07-22, signals 75+: 10
+  ETH        2023-01-01 to 2026-11-20, 34080 hours, judged from 2023-07-22, signals 75+: 26
+  SOL        2023-01-01 to 2026-11-20, 34080 hours, judged from 2023-07-22, signals 75+: 19
+  GOLD       2025-12-11 to 2026-11-20, 8272 hours, judged from 2025-12-12, signals 75+: 1
+  SILVER     2026-01-07 to 2026-11-20, 7622 hours, judged from 2026-01-09, signals 75+: 7
+  GOLD-PAXG  2023-01-01 to 2026-11-20, 34079 hours, judged from 2023-01-01, signals 75+: 20
+
+Trading window 2023-07-22 to 2026-11-21; in-sample until 2025-11-20, out-of-sample after.
+
+== Choosing settings on IN-SAMPLE data only
+  min score 70, runner trails       : 41 trades, win 41.5%, avg -0.12R, total -5.1R, PF 0.80, maxDD 11.2R
+  min score 70, runner exits at target: 41 trades, win 41.5%, avg -0.09R, total -3.6R, PF 0.86, maxDD 9.7R
+  min score 75, runner trails       : 28 trades, win 42.9%, avg -0.03R, total -0.9R, PF 0.95, maxDD 5.9R
+  min score 75, runner exits at target: 28 trades, win 42.9%, avg 0.02R, total 0.6R, PF 1.04, maxDD 5.9R
+  min score 80, runner trails       : 11 trades, win 54.5%, avg 0.41R, total 4.5R, PF 1.92, maxDD 2.4R
+  min score 80, runner exits at target: 11 trades, win 54.5%, avg 0.43R, total 4.8R, PF 1.98, maxDD 2.4R
+  min score 85, runner trails       : 6 trades, win 66.7%, avg 0.82R, total 4.9R, PF 3.25, maxDD 1.1R
+  min score 85, runner exits at target: 6 trades, win 66.7%, avg 0.87R, total 5.2R, PF 3.38, maxDD 1.1R
+  -> chosen: min score 70, runner exits at target
+
+== IN-SAMPLE (chosen settings)
+  Trades 41 (0.34/week), win rate 41.5%, avg -0.09R per trade, total -3.6R
+  Profit factor 0.86, max drawdown 9.7R, longest losing streak 5
+  Avg win 1.29R, avg loss -1.06R, avg hold 20h, fees 2.7R, funding 0.3R
+  At 1.0% risk per trade: -3.9% return, max drawdown 9.5%
+  Outcomes: LOSS 22, TIME_EXIT 2, TP1_THEN_BREAKEVEN 9, TP2 4, RUNNER 4
+    BTC          11 trades, win  27.3%, avg  -0.49R, total   -5.3R
+    ETH          14 trades, win  42.9%, avg   0.11R, total    1.5R
+    SOL          16 trades, win  50.0%, avg   0.01R, total    0.2R
+    SHORT        13 trades, win  38.5%, avg  -0.18R, total   -2.4R
+    LONG         28 trades, win  42.9%, avg  -0.04R, total   -1.2R
+    TREND_PULLBACK     23 trades, win  39.1%, avg  -0.32R
+    BREAKOUT_RETEST     9 trades, win  55.6%, avg   0.27R
+    LIQUIDITY_SWEEP    30 trades, win  36.7%, avg  -0.17R
+  Go-live checklist:
+    [ ] 100+ trades (got 41)
+    [ ] Win rate 50%+ (got 41.5%)
+    [ ] Expectancy +0.3R or more after costs (got -0.09R)
+    [ ] Profit factor 1.5+ (got 0.86)
+    [x] Max drawdown under 15R (got 9.67R)
+
+== OUT-OF-SAMPLE (chosen settings) <- the honest estimate
+  Trades 34 (0.65/week), win rate 44.1%, avg -0.02R per trade, total -0.7R
+  Profit factor 0.97, max drawdown 12.1R, longest losing streak 5
+  Avg win 1.37R, avg loss -1.12R, avg hold 20h, fees 3.1R, funding 0.1R
+  At 1.0% risk per trade: -1.0% return, max drawdown 11.4%
+  Outcomes: LOSS 18, TIME_EXIT 1, TP1_THEN_BREAKEVEN 6, TP2 3, RUNNER 4, OPEN_AT_END 2
+    BTC           3 trades, win  66.7%, avg   1.03R, total    3.1R
+    ETH          13 trades, win  53.8%, avg   0.22R, total    2.9R
+    GOLD          4 trades, win  25.0%, avg  -0.98R, total   -3.9R
+    SILVER        5 trades, win  60.0%, avg   0.44R, total    2.2R
+    SOL           9 trades, win  22.2%, avg  -0.55R, total   -5.0R
+    SHORT        28 trades, win  46.4%, avg   0.04R, total    1.2R
+    LONG          6 trades, win  33.3%, avg  -0.32R, total   -1.9R
+    TREND_PULLBACK     23 trades, win  43.5%, avg  -0.10R
+    BREAKOUT_RETEST     7 trades, win  57.1%, avg   0.50R
+    LIQUIDITY_SWEEP    20 trades, win  30.0%, avg  -0.40R
+  Go-live checklist:
+    [ ] 100+ trades (got 34)
+    [ ] Win rate 50%+ (got 44.1%)
+    [ ] Expectancy +0.3R or more after costs (got -0.02R)
+    [ ] Profit factor 1.5+ (got 0.97)
+    [x] Max drawdown under 15R (got 12.07R)
+
+== OUT-OF-SAMPLE (plan defaults: score 75, trailing runner)
+  Trades 17 (0.33/week), win rate 52.9%, avg 0.38R per trade, total 6.4R
+  Profit factor 1.72, max drawdown 5.6R, longest losing streak 3
+  Avg win 1.70R, avg loss -1.11R, avg hold 30h, fees 1.3R, funding 0.1R
+  At 1.0% risk per trade: 6.3% return, max drawdown 5.5%
+  Outcomes: LOSS 8, TP1_THEN_BREAKEVEN 4, TP2 1, RUNNER 2, OPEN_AT_END 2
+    BTC           1 trades, win 100.0%, avg   1.38R, total    1.4R
+    ETH           6 trades, win  50.0%, avg   0.61R, total    3.7R
+    GOLD          1 trades, win 100.0%, avg   0.01R, total    0.0R
+    SILVER        3 trades, win  66.7%, avg   0.64R, total    1.9R
+    SOL           6 trades, win  33.3%, avg  -0.10R, total   -0.6R
+    SHORT        13 trades, win  53.8%, avg   0.53R, total    6.9R
+    LONG          4 trades, win  50.0%, avg  -0.12R, total   -0.5R
+    TREND_PULLBACK      9 trades, win  66.7%, avg   0.98R
+    BREAKOUT_RETEST     5 trades, win  60.0%, avg   0.19R
+    LIQUIDITY_SWEEP    11 trades, win  36.4%, avg   0.24R
+  Go-live checklist:
+    [ ] 100+ trades (got 17)
+    [x] Win rate 50%+ (got 52.9%)
+    [x] Expectancy +0.3R or more after costs (got 0.38R)
+    [x] Profit factor 1.5+ (got 1.72)
+    [x] Max drawdown under 15R (got 5.62R)
+
+== FULL PERIOD (chosen settings)
+  Trades 75 (0.43/week), win rate 42.7%, avg -0.06R per trade, total -4.3R
+  Profit factor 0.91, max drawdown 19.3R, longest losing streak 5
+  Avg win 1.32R, avg loss -1.09R, avg hold 20h, fees 5.7R, funding 0.4R
+  At 1.0% risk per trade: -4.9% return, max drawdown 18.0%
+  Outcomes: LOSS 40, TIME_EXIT 3, TP1_THEN_BREAKEVEN 15, TP2 7, RUNNER 8, OPEN_AT_END 2
+    BTC          14 trades, win  35.7%, avg  -0.16R, total   -2.3R
+    ETH          27 trades, win  48.1%, avg   0.16R, total    4.4R
+    GOLD          4 trades, win  25.0%, avg  -0.98R, total   -3.9R
+    SILVER        5 trades, win  60.0%, avg   0.44R, total    2.2R
+    SOL          25 trades, win  40.0%, avg  -0.19R, total   -4.8R
+    SHORT        41 trades, win  43.9%, avg  -0.03R, total   -1.2R
+    LONG         34 trades, win  41.2%, avg  -0.09R, total   -3.2R
+    TREND_PULLBACK     46 trades, win  41.3%, avg  -0.21R
+    BREAKOUT_RETEST    16 trades, win  56.3%, avg   0.37R
+    LIQUIDITY_SWEEP    50 trades, win  34.0%, avg  -0.26R
+  Go-live checklist:
+    [ ] 100+ trades (got 75)
+    [ ] Win rate 50%+ (got 42.7%)
+    [ ] Expectancy +0.3R or more after costs (got -0.06R)
+    [ ] Profit factor 1.5+ (got 0.91)
+    [ ] Max drawdown under 15R (got 19.33R)
+  Skipped signals: {ALREADY_IN_TRADE=17, COOLDOWN=4, LOSS_LIMIT_PAUSE=2, GROUP_LIMIT=1}
+
+== GOLD on PAXG, long history check (spot proxy, no funding)
+  Trades 29 (0.14/week), win rate 27.6%, avg -0.74R per trade, total -21.4R
+  Profit factor 0.20, max drawdown 21.4R, longest losing streak 4
+  Avg win 0.68R, avg loss -1.28R, avg hold 15h, fees 5.5R, funding 0.0R
+  At 1.0% risk per trade: -19.5% return, max drawdown 19.5%
+  Outcomes: LOSS 20, TIME_EXIT 3, TP1_THEN_BREAKEVEN 4, RUNNER 2
+    GOLD-PAXG    29 trades, win  27.6%, avg  -0.74R, total  -21.4R
+    SHORT         5 trades, win  20.0%, avg  -0.73R, total   -3.6R
+    LONG         24 trades, win  29.2%, avg  -0.74R, total  -17.8R
+    TREND_PULLBACK     14 trades, win  28.6%, avg  -0.73R
+    BREAKOUT_RETEST    12 trades, win  25.0%, avg  -0.89R
+    LIQUIDITY_SWEEP    14 trades, win  28.6%, avg  -0.57R
+  Go-live checklist:
+    [ ] 100+ trades (got 29)
+    [ ] Win rate 50%+ (got 27.6%)
+    [ ] Expectancy +0.3R or more after costs (got -0.74R)
+    [ ] Profit factor 1.5+ (got 0.20)
+    [ ] Max drawdown under 15R (got 21.42R)

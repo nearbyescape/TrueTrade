@@ -1,0 +1,110 @@
+== Data
+  BTC        2023-01-01 to 2026-11-20, 34080 hours
+  ETH        2023-01-01 to 2026-11-20, 34080 hours
+  SOL        2023-01-01 to 2026-11-20, 34080 hours
+  GOLD       2025-12-11 to 2026-11-20, 8272 hours
+  SILVER     2026-01-07 to 2026-11-20, 7622 hours
+  GOLD-PAXG  2023-01-01 to 2026-11-20, 34079 hours
+
+Version 2: daily 55-day breakout, stop 2.0 x ATR, trail 5.0 x ATR, 200-day EMA trend filter, longs and shorts.
+
+== Watch list (gold & silver on futures): DEVELOPMENT (used to choose settings)
+  Trades 26 (0.26/week), win rate 34.6%, avg 0.29R per trade, total 7.4R
+  Profit factor 1.46, max drawdown 7.2R, longest losing streak 6
+  Avg win 2.62R, avg loss -0.95R, avg hold 33.2 days, fees 0.3R, funding 3.0R
+  At 1.0% risk per trade: 7.2% return, max drawdown 7.0%
+    BTC             8 trades, win  50.0%, avg   1.23R, total    9.8R
+    ETH            10 trades, win  30.0%, avg  -0.17R, total   -1.7R
+    SOL             8 trades, win  25.0%, avg  -0.09R, total   -0.7R
+    SHORT           8 trades, win  12.5%, avg  -0.70R, total   -5.6R
+    LONG           18 trades, win  44.4%, avg   0.72R, total   13.0R
+    2023            5 trades, win  60.0%, avg   1.41R, total    7.1R
+    2024           13 trades, win  30.8%, avg   0.27R, total    3.5R
+    2025            8 trades, win  25.0%, avg  -0.39R, total   -3.2R
+  Checklist:
+    [ ] 30+ trades (got 26)
+    [ ] Expectancy +0.3R or more after costs (got 0.29R)
+    [ ] Profit factor 1.5+ (got 1.46)
+    [x] Max drawdown under 15R (got 7.23R)
+
+== Watch list (gold & silver on futures): HELD-OUT from 2025-07-01 (never used for choosing)
+  Trades 16 (0.22/week), win rate 37.5%, avg 0.44R per trade, total 7.1R
+  Profit factor 1.72, max drawdown 5.8R, longest losing streak 4
+  Avg win 2.82R, avg loss -0.99R, avg hold 53.2 days, fees 0.2R, funding -0.0R
+  At 1.0% risk per trade: 7.0% return, max drawdown 5.7%
+    BTC             4 trades, win  25.0%, avg   0.02R, total    0.1R
+    ETH             5 trades, win  60.0%, avg   1.16R, total    5.8R
+    GOLD            2 trades, win   0.0%, avg  -1.03R, total   -2.1R
+    SILVER          1 trades, win 100.0%, avg   4.25R, total    4.2R
+    SOL             4 trades, win  25.0%, avg  -0.25R, total   -1.0R
+    LONG            8 trades, win  12.5%, avg  -0.43R, total   -3.4R
+    SHORT           8 trades, win  62.5%, avg   1.32R, total   10.5R
+    2025            6 trades, win  50.0%, avg   0.80R, total    4.8R
+    2026           10 trades, win  30.0%, avg   0.23R, total    2.3R
+  Checklist:
+    [ ] 30+ trades (got 16)
+    [x] Expectancy +0.3R or more after costs (got 0.44R)
+    [x] Profit factor 1.5+ (got 1.72)
+    [x] Max drawdown under 15R (got 5.79R)
+
+== Watch list, gold history via PAXG: DEVELOPMENT (used to choose settings)
+  Trades 34 (0.34/week), win rate 38.2%, avg 0.40R per trade, total 13.6R
+  Profit factor 1.67, max drawdown 6.3R, longest losing streak 7
+  Avg win 2.62R, avg loss -0.97R, avg hold 31.5 days, fees 0.6R, funding 3.0R
+  At 1.0% risk per trade: 13.8% return, max drawdown 6.1%
+    BTC             8 trades, win  50.0%, avg   1.23R, total    9.8R
+    ETH            10 trades, win  30.0%, avg  -0.17R, total   -1.7R
+    GOLD-PAXG       8 trades, win  50.0%, avg   0.77R, total    6.2R
+    SOL             8 trades, win  25.0%, avg  -0.09R, total   -0.7R
+    SHORT          10 trades, win  10.0%, avg  -0.77R, total   -7.7R
+    LONG           24 trades, win  50.0%, avg   0.89R, total   21.3R
+    2023            8 trades, win  50.0%, avg   0.74R, total    5.9R
+    2024           16 trades, win  37.5%, avg   0.53R, total    8.5R
+    2025           10 trades, win  30.0%, avg  -0.08R, total   -0.8R
+  Checklist:
+    [x] 30+ trades (got 34)
+    [x] Expectancy +0.3R or more after costs (got 0.40R)
+    [x] Profit factor 1.5+ (got 1.67)
+    [x] Max drawdown under 15R (got 6.31R)
+
+== Watch list, gold history via PAXG: HELD-OUT from 2025-07-01 (never used for choosing)
+  Trades 21 (0.29/week), win rate 47.6%, avg 1.07R per trade, total 22.5R
+  Profit factor 3.17, max drawdown 3.6R, longest losing streak 3
+  Avg win 3.29R, avg loss -0.94R, avg hold 48.0 days, fees 0.4R, funding -0.0R
+  At 1.0% risk per trade: 24.3% return, max drawdown 3.6%
+    BTC             4 trades, win  25.0%, avg   0.02R, total    0.1R
+    ETH             4 trades, win  50.0%, avg   0.84R, total    3.4R
+    GOLD-PAXG       8 trades, win  62.5%, avg   1.98R, total   15.8R
+    SILVER          1 trades, win 100.0%, avg   4.25R, total    4.2R
+    SOL             4 trades, win  25.0%, avg  -0.25R, total   -1.0R
+    LONG           12 trades, win  33.3%, avg   0.78R, total    9.3R
+    SHORT           9 trades, win  66.7%, avg   1.46R, total   13.2R
+    2025            9 trades, win  55.6%, avg   1.27R, total   11.5R
+    2026           12 trades, win  41.7%, avg   0.92R, total   11.0R
+  Checklist:
+    [ ] 30+ trades (got 21)
+    [x] Expectancy +0.3R or more after costs (got 1.07R)
+    [x] Profit factor 1.5+ (got 3.17)
+    [x] Max drawdown under 15R (got 3.62R)
+
+== Watch list: FULL PERIOD
+  Trades 41 (0.24/week), win rate 36.6%, avg 0.38R per trade, total 15.8R
+  Profit factor 1.64, max drawdown 7.2R, longest losing streak 6
+  Avg win 2.70R, avg loss -0.95R, avg hold 40.7 days, fees 0.5R, funding 2.7R
+  At 1.0% risk per trade: 16.1% return, max drawdown 7.0%
+    BTC            11 trades, win  45.5%, avg   1.02R, total   11.2R
+    ETH            15 trades, win  40.0%, avg   0.27R, total    4.1R
+    GOLD            2 trades, win   0.0%, avg  -1.03R, total   -2.1R
+    SILVER          1 trades, win 100.0%, avg   4.25R, total    4.2R
+    SOL            12 trades, win  25.0%, avg  -0.14R, total   -1.7R
+    SHORT          16 trades, win  37.5%, avg   0.31R, total    4.9R
+    LONG           25 trades, win  36.0%, avg   0.43R, total   10.8R
+    2023            5 trades, win  60.0%, avg   1.41R, total    7.1R
+    2024           13 trades, win  30.8%, avg   0.27R, total    3.5R
+    2025           13 trades, win  38.5%, avg   0.22R, total    2.9R
+    2026           10 trades, win  30.0%, avg   0.23R, total    2.3R
+  Checklist:
+    [x] 30+ trades (got 41)
+    [x] Expectancy +0.3R or more after costs (got 0.38R)
+    [x] Profit factor 1.5+ (got 1.64)
+    [x] Max drawdown under 15R (got 7.23R)
