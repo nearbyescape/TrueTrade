@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -66,6 +67,7 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
+            .height(IntrinsicSize.Min) // lets the gold edge match the ticket's height
             .clip(RoundedCornerShape(14.dp))
             .background(Palette.Canopy)
             .animateContentSize(),
@@ -152,7 +154,7 @@ fun LegRail(open: List<OpenLegView>, entering: List<ActionView>, modifier: Modif
  * the cream dot is the price. Distance to the nearest stop is printed under it.
  */
 @Composable
-fun StopLadder(price: Double, open: List<OpenLegView>, modifier: Modifier = Modifier) {
+fun StopLadder(price: Double, open: List<OpenLegView>, modifier: Modifier = Modifier, caption: String? = null) {
     if (open.isEmpty() || price.isNaN()) return
     val stops = open.map { it.stop }
     val lo = minOf(price, stops.min())
@@ -175,6 +177,7 @@ fun StopLadder(price: Double, open: List<OpenLegView>, modifier: Modifier = Modi
             drawCircle(Palette.Cream, radius = 5.dp.toPx(), center = Offset(x(price), mid))
         }
         val pct = abs(price - nearest.stop) / price * 100
+        caption?.let { Text(it, style = Type.Small, color = Palette.Cream, modifier = Modifier.padding(top = 2.dp)) }
         Text(
             "Nearest stop ${formatPrice(nearest.stop)} (${nearest.leg}-day), ${String.format(Locale.US, "%.1f", pct)}% away",
             style = Type.Tiny,

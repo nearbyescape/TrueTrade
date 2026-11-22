@@ -138,8 +138,11 @@ fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
         } else {
             LegRail(a.open, entering)
             Spacer(Modifier.height(10.dp))
-            StopLadder(a.close, a.open)
-            Text(summary(a), style = Type.Small, color = Palette.Lichen, modifier = Modifier.padding(top = 2.dp))
+            if (a.open.isEmpty()) {
+                Text(summary(a), style = Type.Small, color = Palette.Lichen)
+            } else {
+                StopLadder(a.close, a.open, caption = summary(a))
+            }
         }
         if (expanded && a.error == null) {
             Spacer(Modifier.height(12.dp))
@@ -162,10 +165,12 @@ fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
 
 private fun summary(a: AssetView): String {
     if (a.open.isEmpty()) return if (a.actions.isEmpty()) "Flat. No legs open." else "Flat until the next open."
-    val dirs = a.open.groupBy { it.direction }
-    val parts = dirs.map { (d, legs) -> "${numberWords.getOrNull(legs.size)?.lowercase() ?: legs.size} ${d.lowercase()}" }
+    val parts = a.open.groupBy { it.direction }.map { (d, legs) ->
+        val n = numberWords.getOrNull(legs.size)?.lowercase() ?: legs.size.toString()
+        "$n leg${if (legs.size == 1) "" else "s"} ${d.lowercase()}"
+    }
     val best = a.open.maxOf { it.rNow }
-    return "${parts.joinToString(" and ")}, best leg ${rText(best)}"
+    return parts.joinToString(" and ").replaceFirstChar { it.uppercase() } + ", best ${rText(best)}"
 }
 
 // ================================================================================== Record
