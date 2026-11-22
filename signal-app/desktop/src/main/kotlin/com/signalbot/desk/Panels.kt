@@ -328,7 +328,7 @@ fun SidePanel(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, alerts: 
                 Text("${if (t.direction == "LONG") "Long" else "Short"} since ${shortWhen.withZone(zone).format(Instant.ofEpochMilli(t.sinceMs))}, " +
                     String.format(Locale.US, "%+.1fR now", t.rNow), style = T.Body, color = Desk.Paper)
                 CopyRow("Entry", t.entry)
-                CopyRow("Stop now", t.stop, note = "Rises along the opposing line each candle")
+                CopyRow("Stop now", t.stop, note = if (t.lineStop) "Rises along the opposing line each candle" else "Moves to just beyond each new swing")
                 if (t.target != null) CopyRow("Take profit", t.target)
                 else CopyRow("Take profit", null, null, shown = "No fixed target", note = "Exit when price breaks the opposing line")
                 t.quantity?.let { q -> CopyRow("Quantity", q, DeskAnalysis.qty(q), shown = DeskAnalysis.qty(q), note = t.sizeText) }

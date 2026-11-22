@@ -30,6 +30,8 @@ data class DMark(val x: Int, val price: Double, val kind: MarkKind)
 data class DeskTrade(
     val direction: String, val sinceMs: Long, val entry: Double, val stop: Double, val initialStop: Double,
     val target: Double?, val rNow: Double, val quantity: Double?, val sizeText: String?,
+    /** True when the stop follows her opposing trendline; false when no such line existed and it trails swings. */
+    val lineStop: Boolean = true,
 )
 
 /** Something to do (or that happened) at the newest closed candle. ENTER is the signal. */
@@ -125,7 +127,7 @@ object DeskAnalysis {
             val risk = sign * (entry - t.initialStop)
             val z = sizing(entry, t.initialStop)
             DeskTrade(t.direction.name, series.openTime[t.signalIndex] + tfMs, entry, t.stops.last().second, t.initialStop, t.target,
-                if (risk > 0) sign * (series.close[last] - entry) / risk else Double.NaN, z.second, z.first)
+                if (risk > 0) sign * (series.close[last] - entry) / risk else Double.NaN, z.second, z.first, t.stopLine != null)
         }
 
         val entryNow = r.events.lastOrNull { it.action == BrAction.ENTRY && it.index == last }
@@ -133,7 +135,7 @@ object DeskAnalysis {
         val (headline, met) = when {
             entryNow != null -> "${if (entryNow.direction == Direction.LONG) "Buy" else "Sell short"} at the next open. All three checks passed." to 3
             trade != null -> "In a ${trade.direction.lowercase()} from ${formatPrice(trade.entry)}. Stop ${formatPrice(trade.stop)}" +
-                (trade.target?.let { ", target ${formatPrice(it)}" } ?: ", riding the opposing line") + "." to 3
+                (trade.target?.let { ", target ${formatPrice(it)}" } ?: if (trade.lineStop) ", riding the opposing line" else ", trailing each new swing") + "." to 3
             waiting != null -> "Broke the ${waiting.broken?.let { if (it.sourceMs != 0L) timeframeName(it.sourceMs) + " " else "" } ?: ""}" +
                 "${if (waiting.direction == Direction.LONG) "down" else "up"}trend line. Waiting for the retest." to 1
             else -> "Watching the lines. No break yet." to 0
