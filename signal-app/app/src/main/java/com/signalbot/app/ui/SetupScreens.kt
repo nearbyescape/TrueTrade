@@ -191,7 +191,7 @@ fun SetupTodaySection(setup: SetupResult?, onOpenChart: (String) -> Unit) {
             Text("Not checked yet.", style = Type.Small, color = Palette.Muted)
             return@Column
         }
-        Text("${tfLabels.first { it.first == setup.timeframe }.second} candles. ${testedText(setup.timeframe)}",
+        Text(testedText(setup.timeframe),
             style = Type.Small, color = if (setup.timeframe == "1d") Palette.Muted else Palette.Warning)
         setup.assets.flatMap { it.actions }.filter { it.action != "BREAK" && it.action != "RETEST" }.forEach { OrderTicket(it) }
         setup.assets.forEach { v ->

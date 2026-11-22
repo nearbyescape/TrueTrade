@@ -74,16 +74,21 @@ fun CandleChart(model: ChartModel, modifier: Modifier = Modifier, height: Dp = 3
     var selected by remember(key) { mutableStateOf<Int?>(null) }
     val measurer = rememberTextMeasurer()
     val axisStyle = Type.Tiny.copy(color = Palette.Muted)
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    // Wide enough for the longest price on this chart, so labels are never cut.
+    val axisW = remember(key) {
+        val widest = maxOf(formatPrice(model.high.maxOrNull() ?: 0.0), formatPrice(model.low.minOrNull() ?: 0.0), compareBy { it.length })
+        measurer.measure(widest, axisStyle).size.width + with(density) { 14.dp.toPx() }
+    }
 
     Column(modifier) {
         val i = (selected ?: (n - 1)).coerceIn(0, n - 1)
         val up = model.close[i] >= model.open[i]
-        Row(Modifier.fillMaxWidth().padding(bottom = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stamp(model.time[i], model.timeframe), style = Type.Small, color = Palette.Muted)
-            Spacer(Modifier.width(10.dp))
+        Column(Modifier.fillMaxWidth().padding(bottom = 6.dp)) {
+            Text(stamp(model.time[i], model.timeframe) + if (selected == null) ", newest candle" else "", style = Type.Small, color = Palette.Muted)
             Text(
-                "O ${formatPrice(model.open[i])}  H ${formatPrice(model.high[i])}  L ${formatPrice(model.low[i])}  C ${formatPrice(model.close[i])}",
-                style = Type.Small, color = if (up) Palette.Long else Palette.Short,
+                "O ${formatPrice(model.open[i])} H ${formatPrice(model.high[i])} L ${formatPrice(model.low[i])} C ${formatPrice(model.close[i])}",
+                style = Type.Small, color = if (up) Palette.Long else Palette.Short, maxLines = 1,
             )
         }
         Canvas(
@@ -94,7 +99,7 @@ fun CandleChart(model: ChartModel, modifier: Modifier = Modifier, height: Dp = 3
                 .background(Palette.Night)
                 .pointerInput(key) {
                     detectTransformGestures { _, pan, zoom, _ ->
-                        val plotW = size.width - 58.dp.toPx()
+                        val plotW = size.width - axisW
                         visible = (visible / zoom).coerceIn(12f, max(12f, n + 8f))
                         val cw = plotW / visible
                         right = (right - pan.x / cw).coerceIn(visible * 0.5f, n - 1 + 8f)
@@ -102,7 +107,7 @@ fun CandleChart(model: ChartModel, modifier: Modifier = Modifier, height: Dp = 3
                 }
                 .pointerInput(key) {
                     detectTapGestures { pos ->
-                        val plotW = size.width - 58.dp.toPx()
+                        val plotW = size.width - axisW
                         if (pos.x > plotW) { selected = null; return@detectTapGestures }
                         val cw = plotW / visible
                         val idx = Math.round(right - (plotW - pos.x) / cw)
@@ -110,7 +115,7 @@ fun CandleChart(model: ChartModel, modifier: Modifier = Modifier, height: Dp = 3
                     }
                 },
         ) {
-            drawChart(model, visible, right, selected, measurer, axisStyle)
+            drawChart(model, visible, right, selected, measurer, axisStyle, axisW)
         }
         FlowRow(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Legend(Palette.Short, "Downtrend line")
@@ -130,10 +135,9 @@ private fun Legend(color: Color, text: String) {
     }
 }
 
-private fun DrawScope.drawChart(m: ChartModel, visible: Float, right: Float, selected: Int?, tm: TextMeasurer, axis: TextStyle) {
+private fun DrawScope.drawChart(m: ChartModel, visible: Float, right: Float, selected: Int?, tm: TextMeasurer, axis: TextStyle, axisW: Float) {
     val n = m.size
     if (n == 0) return
-    val axisW = 58.dp.toPx()
     val bottomH = 20.dp.toPx()
     val plotW = size.width - axisW
     val plotH = size.height - bottomH
@@ -157,7 +161,7 @@ private fun DrawScope.drawChart(m: ChartModel, visible: Float, right: Float, sel
     while (g < maxP) {
         val yy = y(g)
         drawLine(Palette.Line.copy(alpha = 0.45f), Offset(0f, yy), Offset(plotW, yy), 1f)
-        label(tm, formatPrice(g), Offset(plotW + 6.dp.toPx(), yy), axis)
+        label(tm, axisPrice(g, step), Offset(plotW + 6.dp.toPx(), yy), axis)
         g += step
     }
     // Time labels.
@@ -229,16 +233,29 @@ private fun DrawScope.drawChart(m: ChartModel, visible: Float, right: Float, sel
         }
     }
 
-    // Last price tag on the axis.
+    // Tags on the axis: the live stop and target of an open trade, then the last price on top.
+    fun tag(price: Double, color: Color) {
+        val ty = y(price)
+        if (ty !in 0f..plotH) return
+        val r = tm.measure(formatPrice(price), axis.copy(color = Palette.Night))
+        drawRect(color, Offset(plotW + 2.dp.toPx(), ty - r.size.height / 2f - 2.dp.toPx()), Size(axisW - 2.dp.toPx(), r.size.height + 4.dp.toPx()))
+        drawText(r, topLeft = Offset(plotW + 6.dp.toPx(), ty - r.size.height / 2f))
+    }
+    m.stops.filter { it.to >= n - 1 }.forEach { tag(it.price, Palette.Short.copy(alpha = 0.85f)) }
+    m.targets.filter { it.to >= n - 1 }.forEach { tag(it.price, Palette.Long.copy(alpha = 0.85f)) }
     val last = m.close[n - 1]
     val ly = y(last)
     if (ly in 0f..plotH) {
-        val tag = if (last >= m.open[n - 1]) Palette.Long else Palette.Short
-        drawLine(tag.copy(alpha = 0.6f), Offset(x((n - 1).toFloat()), ly), Offset(plotW, ly), 1f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 6f)))
-        val r = tm.measure(formatPrice(last), axis.copy(color = Palette.Night))
-        drawRect(tag, Offset(plotW + 2.dp.toPx(), ly - r.size.height / 2f - 2.dp.toPx()), Size(axisW - 2.dp.toPx(), r.size.height + 4.dp.toPx()))
-        drawText(r, topLeft = Offset(plotW + 6.dp.toPx(), ly - r.size.height / 2f))
+        val c = if (last >= m.open[n - 1]) Palette.Long else Palette.Short
+        drawLine(c.copy(alpha = 0.6f), Offset(x((n - 1).toFloat()), ly), Offset(plotW, ly), 1f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 6f)))
+        tag(last, c)
     }
+}
+
+/** Grid labels with only the decimals the grid step needs. */
+private fun axisPrice(p: Double, step: Double): String {
+    val decimals = when { step >= 1 -> 0; step >= 0.1 -> 1; step >= 0.01 -> 2; else -> 4 }
+    return String.format(Locale.US, "%,.${decimals}f", p)
 }
 
 private fun DrawScope.triangle(c: Color, xc: Float, yc: Float, s: Float, up: Boolean) {
