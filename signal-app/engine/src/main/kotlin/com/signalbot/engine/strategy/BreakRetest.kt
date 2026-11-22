@@ -49,6 +49,8 @@ data class BreakRetestConfig(
     /** Skip entries whose stop is closer than this fraction of price: costs would swamp them. */
     val minRiskFraction: Double = 0.002,
     val atrLength: Int = 14,
+    /** Only watch lines with at least this many swing touches (2 = any two swings). */
+    val minTouches: Int = 2,
 ) {
     init {
         require(pivot >= 2 && trailPivot >= 1 && retestBars >= 1 && newestAnchors >= 1)
@@ -336,6 +338,7 @@ class BreakRetestEngine(val cfg: BreakRetestConfig = BreakRetestConfig()) {
                     if (a.price < b.price || b.index - a.index < 2 * cfg.pivot) continue
                     val l = Line(a.index, a.price, b.index, b.price, 0)
                     val touches = validTouches(l, t, kb) ?: continue
+                    if (touches < cfg.minTouches) continue
                     val cand = Line(a.index, a.price, b.index, b.price, touches)
                     if (best == null || better(cand, best)) best = cand
                 }
@@ -359,10 +362,10 @@ class BreakRetestEngine(val cfg: BreakRetestConfig = BreakRetestConfig()) {
                 if (!atr[i].isNaN() && x.high[i] > lv + cfg.touchAtr * atr[i]) return null
             }
             var touches = 0
+            val a = atr.getOrNull(t)?.takeIf { !it.isNaN() } ?: return 2
             for (k in 0..kb) {
                 val h = highs[k]
                 if (h.index < l.i1) continue
-                val a = atr[h.index].takeIf { !it.isNaN() } ?: continue
                 if (abs(h.price - l.at(h.index)) <= cfg.touchAtr * a) touches++
             }
             return max(touches, 2)

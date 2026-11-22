@@ -43,17 +43,22 @@ fun main(args: Array<String>) {
     fun say(s: String) { println(s); sb.append(s).append('\n') }
 
     data class Variant(val name: String, val tf: Timeframe, val cfg: BreakRetestConfig, val filter: Boolean)
+    val only = args.getOrNull(3)
     val variants = buildList {
-        for (tf in listOf(Timeframe.H1, Timeframe.H4)) {
-            val base = if (tf == Timeframe.H1) BreakRetestConfig(pivot = 5, trailPivot = 3, retestBars = 48)
-                else BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 24, maxLineBars = 250)
-            for (exit in ExitMode.entries) for (filter in listOf(false, true)) {
-                val c = base.copy(exit = exit)
-                add(Variant("${tf.label} ${exit.name.lowercase()}${if (filter) " +daily trend" else ""}", tf, c, filter))
+        for (tf in listOf(Timeframe.H1, Timeframe.H4, Timeframe.D1)) {
+            val base = when (tf) {
+                Timeframe.H1 -> BreakRetestConfig(pivot = 5, trailPivot = 3, retestBars = 48)
+                Timeframe.H4 -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 24, maxLineBars = 250)
+                else -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 10, maxLineBars = 200)
             }
+            for (exit in ExitMode.entries) for (filter in listOf(false, true)) {
+                add(Variant("${tf.label} ${exit.name.lowercase()}${if (filter) " +daily trend" else ""}", tf, base.copy(exit = exit), filter))
+            }
+            add(Variant("${tf.label} trail +daily trend, 3+ touch lines", tf, base.copy(minTouches = 3), true))
+            add(Variant("${tf.label} trail +daily trend, bigger swings", tf, base.copy(pivot = base.pivot * 2), true))
             add(Variant("${tf.label} target, 1.5R+ only", tf, base.copy(exit = ExitMode.TARGET, minTargetR = 1.5), false))
         }
-    }
+    }.filter { only == null || it.name.startsWith(only) }
 
     for (v in variants) {
         val results = ids.flatMap { id ->
