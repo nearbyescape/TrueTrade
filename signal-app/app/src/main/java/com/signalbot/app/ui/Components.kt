@@ -52,6 +52,10 @@ fun rText(v: Double) = if (v.isNaN()) "-" else String.format(Locale.US, "%+.1fR"
 fun verb(a: ActionView): String = when {
     a.action == "ENTER" && a.direction == "LONG" -> "Buy"
     a.action == "ENTER" -> "Sell short"
+    a.action == "MOVE_STOP" -> "Move stop"
+    a.action == "BREAK" -> "Line broken"
+    a.action == "RETEST" -> "Retested"
+    a.leg == 0 -> "Closed"
     a.direction == "LONG" -> "Sell to close"
     else -> "Buy to close"
 }
@@ -78,7 +82,14 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
                 Text(a.assetName, style = Type.Name, color = Palette.Ink, modifier = Modifier.weight(1f))
                 Text(verb(a), style = Type.BodyStrong, color = dirColor)
             }
-            Text("${a.leg}-day leg, at the next open", style = Type.Small, color = Palette.Muted)
+            Text(
+                when {
+                    a.leg != 0 -> "${a.leg}-day leg, at the next open"
+                    a.action == "ENTER" -> "Break and retest, at the next open"
+                    else -> "Break and retest trade"
+                },
+                style = Type.Small, color = Palette.Muted,
+            )
             Spacer(Modifier.height(10.dp))
             if (a.action == "ENTER") {
                 Row {
@@ -89,6 +100,8 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
                     Spacer(Modifier.height(8.dp))
                     Text(it, style = Type.Small, color = Palette.Muted)
                 }
+            } else if (a.leg == 0) {
+                Text(a.reasons.firstOrNull() ?: "", style = Type.Small, color = Palette.Muted)
             } else {
                 Text("Daily close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}.", style = Type.Small, color = Palette.Muted)
             }

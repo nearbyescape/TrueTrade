@@ -405,3 +405,32 @@ class BreakRetestEngine(val cfg: BreakRetestConfig = BreakRetestConfig()) {
         return out.sortedBy { abs(it.price - c) }.take(6).sortedBy { it.price }
     }
 }
+
+/** Settings per chart timeframe, as tested in the study (tools/BreakRetestStudy.kt). */
+object BreakRetestPresets {
+    fun forTimeframe(tf: com.signalbot.engine.model.Timeframe): BreakRetestConfig = when (tf) {
+        com.signalbot.engine.model.Timeframe.D1 -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 10, maxLineBars = 200)
+        com.signalbot.engine.model.Timeframe.H4 -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 24, maxLineBars = 250)
+        else -> BreakRetestConfig(pivot = 5, trailPivot = 3, retestBars = 48)
+    }
+}
+
+/**
+ * Higher-timeframe filter ("top-down"): longs only while the last CLOSED daily candle is above its
+ * [emaLength]-day EMA, shorts only while below. Index i of the result applies to the close of candle i of [s].
+ */
+object DailyTrend {
+    fun allow(d1: Series, s: Series, emaLength: Int = 50): Pair<BooleanArray, BooleanArray> {
+        val ema = Indicators.ema(d1.close, emaLength)
+        val step = if (s.size > 1) s.openTime[1] - s.openTime[0] else com.signalbot.engine.model.Timeframe.D1.millis
+        val up = BooleanArray(s.size)
+        val down = BooleanArray(s.size)
+        for (i in 0 until s.size) {
+            val k = d1.closedIndexAt(com.signalbot.engine.model.Timeframe.D1, s.openTime[i] + step)
+            if (k < 0 || ema[k].isNaN()) continue
+            up[i] = d1.close[k] > ema[k]
+            down[i] = d1.close[k] < ema[k]
+        }
+        return up to down
+    }
+}

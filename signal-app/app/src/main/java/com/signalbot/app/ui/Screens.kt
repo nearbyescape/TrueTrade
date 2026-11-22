@@ -57,15 +57,15 @@ fun headline(n: Int): String {
     return "$count order${if (n == 1) "" else "s"} for today's open."
 }
 
-private val screenPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 28.dp, bottom = 32.dp)
+internal val screenPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 28.dp, bottom = 32.dp)
 
 @Composable
-private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
+internal fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(text, style = Type.Title, color = Palette.Ink, modifier = modifier.padding(top = 20.dp, bottom = 4.dp))
 }
 
 @Composable
-private fun AccentAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+internal fun AccentAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
     Text(
         text,
@@ -87,6 +87,8 @@ fun TodayContent(
     scanning: Boolean,
     message: String?,
     onCheck: () -> Unit,
+    setup: com.signalbot.app.data.SetupResult? = null,
+    onOpenChart: (String) -> Unit = {},
     nowMs: Long = System.currentTimeMillis(),
     zone: ZoneId = ZoneId.systemDefault(),
 ) {
@@ -100,7 +102,7 @@ fun TodayContent(
                 Spacer(Modifier.height(8.dp))
                 Text(
                     if (scan == null) "Check now to load today's signals."
-                    else "Checked at ${clockFmt.format(zoned(scan.timeMs, zone))}. New signals come after each daily close at 05:30.",
+                    else "Checked at ${clockFmt.format(zoned(scan.timeMs, zone))}. Breakout signals come after each daily close at 05:30.",
                     style = Type.Small, color = Palette.Muted,
                 )
                 message?.let { Text(it, style = Type.Small, color = Palette.Warning, modifier = Modifier.padding(top = 6.dp)) }
@@ -113,6 +115,7 @@ fun TodayContent(
             item { SectionTitle("Positions") }
             items(scan.assets) { PositionRow(it) }
         }
+        item { SetupTodaySection(setup, onOpenChart) }
     }
 }
 
@@ -176,7 +179,13 @@ private fun summary(a: AssetView): String {
 // ================================================================================== Record
 
 @Composable
-fun RecordContent(scan: ScanResult?) {
+fun RecordContent(
+    scan: ScanResult?,
+    setupTest: com.signalbot.app.data.SetupTest? = null,
+    testing: Boolean = false,
+    testProgress: String? = null,
+    onRunTest: () -> Unit = {},
+) {
     val rows = scan?.assets?.mapNotNull { a -> a.paper?.let { a.name to it } }.orEmpty()
     val legs = rows.sumOf { it.second.trades }
     val total = rows.sumOf { it.second.totalR }
@@ -224,6 +233,7 @@ fun RecordContent(scan: ScanResult?) {
                 )
             }
         }
+        item { SetupRecordSection(setupTest, testing, testProgress, onRunTest) }
     }
 }
 
@@ -249,7 +259,7 @@ fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefaul
             items(entries) { a ->
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
                     Text(
-                        "${a.leg}d",
+                        if (a.leg == 0) "B&R" else "${a.leg}d",
                         style = Type.Tiny,
                         color = Palette.direction(a.direction),
                         modifier = Modifier
@@ -263,8 +273,12 @@ fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefaul
                     Column(Modifier.weight(1f)) {
                         Text("${a.assetName}: ${verb(a).lowercase().replaceFirstChar { it.uppercase() }}", style = Type.BodyStrong, color = Palette.Ink)
                         Text(
-                            if (a.action == "ENTER") "Close ${formatPrice(a.close)}, stop ${formatPrice(a.stop)}"
-                            else "Close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}",
+                            when {
+                                a.action == "ENTER" -> "Close ${formatPrice(a.close)}, stop ${formatPrice(a.stop)}"
+                                a.action == "MOVE_STOP" -> "Stop moved to ${formatPrice(a.stop)}"
+                                a.leg == 0 -> a.reasons.firstOrNull() ?: "Closed"
+                                else -> "Close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}"
+                            },
                             style = Type.Small, color = Palette.Muted,
                         )
                     }
@@ -285,6 +299,8 @@ fun SettingsContent(
     onSave: (SettingsState) -> SettingsState,
     onToggle: (String, Boolean) -> Unit,
     onBatterySettings: () -> Unit,
+    setupInitial: SetupSettingsState? = null,
+    onSetupChange: (SetupSettingsState) -> SetupSettingsState = { it },
 ) {
     var capital by remember { mutableStateOf(initial.capital) }
     var risk by remember { mutableStateOf(initial.riskPerLeg) }
@@ -339,10 +355,12 @@ fun SettingsContent(
                 )
             }
         }
+        setupInitial?.let { si -> item { SetupSettingsSection(si, onSetupChange) } }
         item { SectionTitle("Background checks") }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("The app checks after 05:30 every morning and every three hours after that. Some phones pause apps to save battery; " +
+                Text("The app checks after 05:30 every morning and every three hours after that, and every hour when the break-and-retest " +
+                    "alerts use 4-hour or 1-hour candles. Some phones pause apps to save battery; " +
                     "if signals arrive late, let this app run without battery limits.", style = Type.Body, color = Palette.Ink)
                 AccentAction("Open battery settings", onClick = onBatterySettings)
             }
@@ -350,7 +368,7 @@ fun SettingsContent(
         item { SectionTitle("How it decides") }
         item {
             Text(
-                "Each asset has four legs: 20, 30, 60 and 90 days. A leg buys when the daily close is the highest of its period and " +
+                "Breakout ensemble: each asset has four legs: 20, 30, 60 and 90 days. A leg buys when the daily close is the highest of its period and " +
                     "above the 200-day average, or sells short on the mirror image. Its stop sits at the middle of that period's closing " +
                     "range and only moves your way. A leg closes when a daily close crosses its stop. Not financial advice: paper trade first.",
                 style = Type.Small, color = Palette.Muted,

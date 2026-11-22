@@ -5,16 +5,15 @@ import com.signalbot.engine.backtest.BreakRetestBacktest
 import com.signalbot.engine.backtest.Stats
 import com.signalbot.engine.data.Market
 import com.signalbot.engine.history.BinanceArchive
-import com.signalbot.engine.indicators.Indicators
 import com.signalbot.engine.model.Assets
-import com.signalbot.engine.model.Candle
 import com.signalbot.engine.model.Series
 import com.signalbot.engine.model.Timeframe
 import com.signalbot.engine.strategy.BreakRetestConfig
+import com.signalbot.engine.strategy.BreakRetestPresets
+import com.signalbot.engine.strategy.DailyTrend
 import com.signalbot.engine.strategy.BreakRetestEngine
 import com.signalbot.engine.strategy.ExitMode
 import com.signalbot.engine.strategy.Resample
-import com.signalbot.engine.strategy.closedIndexAt
 import java.io.File
 import java.time.Instant
 import java.time.LocalDate
@@ -46,11 +45,7 @@ fun main(args: Array<String>) {
     val only = args.getOrNull(3)
     val variants = buildList {
         for (tf in listOf(Timeframe.H1, Timeframe.H4, Timeframe.D1)) {
-            val base = when (tf) {
-                Timeframe.H1 -> BreakRetestConfig(pivot = 5, trailPivot = 3, retestBars = 48)
-                Timeframe.H4 -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 24, maxLineBars = 250)
-                else -> BreakRetestConfig(pivot = 3, trailPivot = 2, retestBars = 10, maxLineBars = 200)
-            }
+            val base = BreakRetestPresets.forTimeframe(tf)
             for (exit in ExitMode.entries) for (filter in listOf(false, true)) {
                 add(Variant("${tf.label} ${exit.name.lowercase()}${if (filter) " +daily trend" else ""}", tf, base.copy(exit = exit), filter))
             }
@@ -65,7 +60,7 @@ fun main(args: Array<String>) {
             val h1 = hourly.getValue(id)
             if (h1.size < 1000) return@flatMap emptyList<BrResult>()
             val s = if (v.tf == Timeframe.H1) Series(h1) else Series(Resample.from1h(h1, v.tf))
-            val (al, ash) = if (v.filter) trendFilter(h1, s) else null to null
+            val (al, ash) = if (v.filter) DailyTrend.allow(Series(Resample.from1h(h1, Timeframe.D1)), s) else null to null
             val replay = BreakRetestEngine(v.cfg).replay(s, allowLong = al, allowShort = ash)
             BreakRetestBacktest.price(id, replay, funding.getValue(id))
         }.filter { it.entryTime >= dev }
@@ -88,20 +83,6 @@ fun main(args: Array<String>) {
         }
     }
     File(out, "breakretest.txt").writeText(sb.toString())
-}
-
-/** Higher-timeframe filter: longs only while the last closed daily candle is above its 50-day EMA, shorts below. */
-internal fun trendFilter(h1: List<Candle>, s: Series): Pair<BooleanArray, BooleanArray> {
-    val d = Series(Resample.from1h(h1, Timeframe.D1))
-    val ema = Indicators.ema(d.close, 50)
-    val tf = s.openTime[1] - s.openTime[0]
-    val up = BooleanArray(s.size); val down = BooleanArray(s.size)
-    for (i in 0 until s.size) {
-        val k = d.closedIndexAt(Timeframe.D1, s.openTime[i] + tf)
-        if (k < 0 || ema[k].isNaN()) continue
-        up[i] = d.close[k] > ema[k]; down[i] = d.close[k] < ema[k]
-    }
-    return up to down
 }
 
 private fun day(s: String) = LocalDate.parse(s).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()

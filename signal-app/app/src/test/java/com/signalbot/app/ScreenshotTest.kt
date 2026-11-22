@@ -14,6 +14,18 @@ import com.signalbot.app.data.AssetView
 import com.signalbot.app.data.OpenLegView
 import com.signalbot.app.data.PaperStats
 import com.signalbot.app.data.ScanResult
+import com.signalbot.app.data.SetupResult
+import com.signalbot.app.data.SetupTest
+import com.signalbot.app.data.SetupTestRow
+import com.signalbot.app.data.SetupView
+import com.signalbot.app.data.MarkerKind
+import com.signalbot.app.data.LineStyle
+import com.signalbot.app.scan.SetupAnalysis
+import com.signalbot.app.ui.ChartContent
+import com.signalbot.app.ui.SetupRecordSection
+import com.signalbot.app.ui.SetupSettingsSection
+import com.signalbot.app.ui.SetupSettingsState
+import com.signalbot.app.ui.SetupTodaySection
 import com.signalbot.app.ui.JournalContent
 import com.signalbot.app.ui.OrderTicket
 import com.signalbot.app.ui.PositionRow
@@ -104,5 +116,82 @@ class ScreenshotTest {
             SettingsState("100000", "0.5", "2", Assets.DEFAULT.associate { it.id to (it.id != "GOLD") }),
             Assets.DEFAULT, onSave = { it }, onToggle = { _, _ -> }, onBatterySettings = {},
         )
+    }
+
+    // ------------------------------------------------------------------ break and retest
+
+    /** Daily candles from a seeded random walk with swings, so trendlines, breaks and trades appear. */
+    private fun candles(seed: Int, n: Int = 520): com.signalbot.engine.model.Series {
+        val rnd = kotlin.random.Random(seed)
+        var p = 60_000.0
+        var drift = 0.0
+        val day = 86_400_000L
+        val start = close - n * day
+        return com.signalbot.engine.model.Series(List(n) { i ->
+            if (i % 40 == 0) drift = (rnd.nextDouble() - 0.45) * 0.012
+            val o = p
+            val c = o * (1 + drift + 0.022 * (rnd.nextDouble() - 0.5) + 0.01 * sin(i / 7.0))
+            val h = maxOf(o, c) * (1 + 0.012 * rnd.nextDouble())
+            val l = minOf(o, c) * (1 - 0.012 * rnd.nextDouble())
+            p = c
+            com.signalbot.engine.model.Candle(start + i * day, o, h, l, c, 1000.0, start + (i + 1) * day - 1)
+        })
+    }
+
+    /** First seed whose chart window has a trade and a live trendline: a realistic, busy chart. */
+    private val chartView: SetupView by lazy {
+        val tf = com.signalbot.engine.model.Timeframe.D1
+        val cfg = com.signalbot.engine.strategy.BreakRetestPresets.forTimeframe(tf)
+        (1..300).asSequence().map { seed ->
+            val s = candles(seed)
+            SetupAnalysis.build("BTC", "Bitcoin", tf, s, s, cfg, useTrend = true,
+                sizeText = { _, _ -> "Size 0.2300 units (21,000), margin 10,500, risk 1,000" })
+        }.firstOrNull { v ->
+            val c = v.chart!!
+            c.markers.count { it.kind == MarkerKind.BUY || it.kind == MarkerKind.SELL } >= 2 &&
+                c.lines.any { it.style != LineStyle.OLD } && c.levels.isNotEmpty()
+        } ?: SetupAnalysis.build("BTC", "Bitcoin", tf, candles(1), candles(1), cfg, useTrend = true)
+    }
+
+    @Test fun chart() = shot("7_chart") {
+        ChartContent(Assets.DEFAULT, "BTC", "1d", "1d", chartView, loading = false, onAsset = {}, onTimeframe = {}, onRefresh = {})
+    }
+
+    private val brEntry = ActionView("ETH", "Ethereum", 0, "ENTER", "LONG", 3_412.6, 3_268.0, close,
+        listOf("Buy at the next open. Broke the downtrend line, pulled back to it and the candle closed above it. Stop 3,268.0, " +
+            "trail it under each new swing", "Line from 12 Oct (3,980.2) through 2 Nov (3,610.4), 3 touches"),
+        "Size 6.9000 units (23,547), margin 11,774, risk 1,000")
+
+    @Test fun setupToday() = shot("8_setup_today") {
+        val views = listOf(
+            SetupView("BTC", "Bitcoin", "1d", close, 91_250.5, "In a long since 14 Nov. Stop 88,410.0.",
+                SetupAnalysis.CRITERIA.map { it to true }, emptyList(), null, null, null),
+            SetupView("ETH", "Ethereum", "1d", close, 3_412.6, "Buy at the next open. All three checks passed.",
+                SetupAnalysis.CRITERIA.map { it to true }, listOf(brEntry), null, null, null),
+            SetupView("SOL", "Solana", "1d", close, 141.3, "Broke the uptrend line. Waiting for price to pull back and retest it.",
+                SetupAnalysis.CRITERIA.mapIndexed { i, t -> t to (i == 0) }, emptyList(), null, null, null),
+            SetupView("SILVER", "Silver", "1d", close, 31.2, "Watching the downtrend line near 32.40. No break yet.",
+                SetupAnalysis.CRITERIA.map { it to false }, emptyList(), null, null, null),
+        )
+        androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            SetupTodaySection(SetupResult(now, "1d", views)) {}
+        }
+    }
+
+    @Test fun setupRecord() = shot("9_setup_record") {
+        val test = SetupTest(now, "1d", "1d candles, trailing stop, daily trend filter on", close - 1460L * 86_400_000L, close,
+            SetupTestRow("All assets", 71, 0.31, 0.34, 24.1), 1.58, 11.8,
+            listOf(SetupTestRow("Bitcoin", 22, 0.32, 0.41, 9.0), SetupTestRow("Ethereum", 19, 0.26, 0.52, 9.9),
+                SetupTestRow("Solana", 21, 0.33, 0.12, 2.5), SetupTestRow("Gold", 4, 0.25, -0.3, -1.2), SetupTestRow("Silver", 5, 0.4, 0.78, 3.9)),
+            listOf("Gold: only 351 candles of history on Binance futures"))
+        androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            SetupRecordSection(test, running = false, progress = null, onRun = {})
+        }
+    }
+
+    @Test fun setupSettings() = shot("10_setup_settings") {
+        androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            SetupSettingsSection(SetupSettingsState("1d", target = false, trend = true, risk = "1", steps = false)) { it }
+        }
     }
 }
