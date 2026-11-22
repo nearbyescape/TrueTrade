@@ -57,8 +57,11 @@ class BinanceArchive(
     private fun marketPath(market: Market) = if (market == Market.PERP) "futures/um" else "spot"
 
     /** 1H candles from the start of [from] up to and including [to] (UTC days). Months before listing are skipped. */
-    fun hourly(symbol: String, market: Market, from: YearMonth, to: LocalDate): List<Candle> {
-        val base = "${marketPath(market)}/%s/klines/$symbol/1h/$symbol-1h-%s.zip"
+    fun hourly(symbol: String, market: Market, from: YearMonth, to: LocalDate): List<Candle> = klines(symbol, market, "1h", from, to)
+
+    /** Candles of [interval] ("5m", "15m", "1h", ...) from the start of [from] up to and including [to] (UTC days). */
+    fun klines(symbol: String, market: Market, interval: String, from: YearMonth, to: LocalDate): List<Candle> {
+        val base = "${marketPath(market)}/%s/klines/$symbol/$interval/$symbol-$interval-%s.zip"
         val byTime = sortedMapOf<Long, Candle>()
         var month = from
         val lastMonth = YearMonth.from(to)

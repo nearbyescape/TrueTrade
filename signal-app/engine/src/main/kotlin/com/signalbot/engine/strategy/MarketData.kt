@@ -49,22 +49,27 @@ fun Series.closedIndexAt(tf: Timeframe, timeMs: Long): Int {
 object Resample {
     fun from1h(h1: List<Candle>, target: Timeframe): List<Candle> {
         require(target.millis > Timeframe.H1.millis && target.millis % Timeframe.H1.millis == 0L)
+        return to(h1, target)
+    }
+
+    /** Builds [target] candles from any shorter, evenly dividing timeframe. Incomplete periods are dropped. */
+    fun to(base: List<Candle>, target: Timeframe): List<Candle> {
         val out = ArrayList<Candle>()
         var i = 0
-        while (i < h1.size) {
-            val start = target.floor(h1[i].openTime)
+        while (i < base.size) {
+            val start = target.floor(base[i].openTime)
             val end = start + target.millis - 1
             var j = i
             var high = Double.NEGATIVE_INFINITY
             var low = Double.POSITIVE_INFINITY
             var vol = 0.0
-            while (j < h1.size && h1[j].openTime <= end) {
-                high = maxOf(high, h1[j].high); low = minOf(low, h1[j].low); vol += h1[j].volume
+            while (j < base.size && base[j].openTime <= end) {
+                high = maxOf(high, base[j].high); low = minOf(low, base[j].low); vol += base[j].volume
                 j++
             }
-            // Complete = we hold the period's first AND last hour (exchanges align periods to UTC).
-            if (h1[i].openTime == start && h1[j - 1].closeTime == end) {
-                out += Candle(start, h1[i].open, high, low, h1[j - 1].close, vol, end)
+            // Complete = we hold the period's first AND last candle (exchanges align periods to UTC).
+            if (base[i].openTime == start && base[j - 1].closeTime == end) {
+                out += Candle(start, base[i].open, high, low, base[j - 1].close, vol, end)
             }
             i = j
         }

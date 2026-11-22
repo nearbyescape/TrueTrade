@@ -78,10 +78,15 @@ object Assets {
         correlationGroup = "metals",
     )
 
-    /** The default watch list. Everything is traded as USDT perpetual futures. More coins: [crypto]. */
+    val XRP = crypto("XRP", "XRP")
+
+    /** The default watch list (phone app). Everything is traded as USDT perpetual futures. More coins: [crypto]. */
     val DEFAULT: List<Asset> = listOf(BTC, ETH, SOL, GOLD, SILVER)
 
-    fun byId(id: String): Asset? = DEFAULT.firstOrNull { it.id.equals(id, ignoreCase = true) }
+    /** The desktop app's watch list: the phone's five plus XRP. */
+    val DESKTOP: List<Asset> = listOf(BTC, ETH, SOL, XRP, GOLD, SILVER)
+
+    fun byId(id: String): Asset? = DESKTOP.firstOrNull { it.id.equals(id, ignoreCase = true) }
 
     /** A coin's USDT perpetual on Binance futures, with Bybit's perpetual as backup, e.g. crypto("XRP", "XRP"). */
     fun crypto(id: String, name: String, followsBtc: Boolean = true): Asset = Asset(

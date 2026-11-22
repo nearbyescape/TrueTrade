@@ -24,6 +24,7 @@ data class Candle(
 
 /** Timeframes the app uses, with each exchange's interval code. */
 enum class Timeframe(val label: String, val millis: Long, val binanceCode: String, val bybitCode: String) {
+    M5("5m", 5L * 60_000, "5m", "5"),
     M15("15m", 15L * 60_000, "15m", "15"),
     H1("1h", 60L * 60_000, "1h", "60"),
     H4("4h", 4L * 60 * 60_000, "4h", "240"),

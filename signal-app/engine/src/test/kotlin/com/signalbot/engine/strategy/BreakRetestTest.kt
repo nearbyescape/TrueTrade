@@ -111,4 +111,33 @@ class BreakRetestTest {
         assertTrue(target > 105.5 && target < 106.3, "target $target")
         assertEquals(BrAction.EXIT_TARGET, t.exitReason)
     }
+
+    @Test
+    fun `her stop follows the opposing line and is tighter than the flat swing stop`() {
+        val flat = BreakRetestEngine().replay(path(*keys)).trades.single()
+        val line = BreakRetestEngine(BreakRetestConfig(stop = StopMode.LINE)).replay(path(*keys)).trades.single()
+        val sl = assertNotNull(line.stopLine)
+        assertEquals(TrendLine.Kind.SUPPORT, sl.kind)
+        assertTrue(sl.p2 > sl.p1, "opposing line must rise")
+        assertTrue(line.initialStop > flat.initialStop, "line stop ${line.initialStop} vs flat ${flat.initialStop}")
+        assertTrue(line.stops.zipWithNext().all { (a, b) -> b.second >= a.second }, "stop never moves back")
+    }
+
+    @Test
+    fun `top-down lines never use higher candles that have not closed`() {
+        val all = Synthetic.hourly(3000, 0.00004, seed = 11)
+        fun run(n: Int): List<BrEvent> {
+            val c = all.subList(0, n)
+            val h4 = Series(Resample.to(c, Timeframe.H4))
+            val d1 = Series(Resample.to(c, Timeframe.D1))
+            val cfg = BreakRetestConfig(stop = StopMode.LINE)
+            return BreakRetestEngine(cfg).replay(Series(c), higher = listOf(
+                d1 to BreakRetestPresets.forTimeframe(Timeframe.D1), h4 to BreakRetestPresets.forTimeframe(Timeframe.H4))).events
+        }
+        val full = run(all.size)
+        assertTrue(full.any { it.action == BrAction.BREAK && it.line?.sourceMs != 0L }, "some breaks should come from higher-timeframe lines")
+        for (cut in listOf(1200, 2201, 2777)) {
+            assertEquals(full.filter { it.index < cut }, run(cut).filter { it.index < cut }, "events before candle $cut must match")
+        }
+    }
 }
