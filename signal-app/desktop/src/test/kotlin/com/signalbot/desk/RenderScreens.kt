@@ -22,7 +22,8 @@ import kotlin.random.Random
 fun main() {
     val out = File("build/screens").apply { mkdirs() }
     val state = DeskState(CoroutineScope(SupervisorJob() + Dispatchers.Default))
-    val now = 1_795_300_000_000L - Math.floorMod(1_795_300_000_000L, 300_000L)
+    // Hour-aligned, like real exchange candles.
+    val now = 1_795_300_000_000L - Math.floorMod(1_795_300_000_000L, 3_600_000L)
     val start = mapOf("BTC" to 91_000.0, "ETH" to 3_100.0, "SOL" to 140.0, "XRP" to 2.2, "GOLD" to 4_100.0, "SILVER" to 51.0)
     state.assets.forEachIndexed { n, a ->
         val books = simulate(start.getValue(a.id), seed = 40 + n * 7, end = now)

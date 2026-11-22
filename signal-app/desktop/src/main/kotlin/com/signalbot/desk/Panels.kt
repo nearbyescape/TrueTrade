@@ -46,11 +46,11 @@ import java.util.Locale
 
 /** What the study found per timeframe for her full method (filled from the backtest). */
 val TESTED: Map<Tf, String> = mapOf(
-    Tf.D1 to "Daily: tested best. Few trades, bigger moves.",
-    Tf.H4 to "4-hour: see the study notes in Settings.",
-    Tf.H1 to "1-hour: see the study notes in Settings.",
-    Tf.M15 to "15-minute: for watching. Fees eat most of the edge.",
-    Tf.M5 to "5-minute: for watching. Fees eat most of the edge.",
+    Tf.D1 to "+0.40R a trade, +0.58R on months it never saw. About 2 trades a month. The only one that made money.",
+    Tf.H4 to "Lost 0.11R a trade. Watch it, don't trade it with real money.",
+    Tf.H1 to "Lost 0.42R a trade, mostly fake breaks.",
+    Tf.M15 to "Lost 0.65R a trade over the last year; fees alone were 0.31R.",
+    Tf.M5 to "Lost 0.72R a trade over the last year; fees alone were 0.38R.",
 )
 
 private val clock = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.UK)
@@ -310,7 +310,8 @@ fun SidePanel(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, alerts: 
                 Text("At the next candle's open. Click a price to copy it.", style = T.Small, color = Desk.Dim)
                 CopyRow("Entry (about)", entry.price)
                 CopyRow("Stop loss", entry.stop, note = "On the opposing trendline; it moves with the line")
-                CopyRow("Take profit", entry.target, note = if (entry.target == null) "None: let the trend run, trail the stop" else null)
+                if (entry.target != null) CopyRow("Take profit", entry.target)
+                else CopyRow("Take profit", null, null, shown = "No fixed target", note = "She lets the trend run; the stop trails the opposing line")
                 entry.quantity?.let { q -> CopyRow("Quantity", q, DeskAnalysis.qty(q), shown = DeskAnalysis.qty(q), note = entry.sizeText) }
             }
             v?.trade != null -> Section("Open trade") {
@@ -319,7 +320,8 @@ fun SidePanel(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, alerts: 
                     String.format(Locale.US, "%+.1fR now", t.rNow), style = T.Body, color = Desk.Paper)
                 CopyRow("Entry", t.entry)
                 CopyRow("Stop now", t.stop, note = "Rises along the opposing line each candle")
-                CopyRow("Take profit", t.target, note = if (t.target == null) "None: trailing" else null)
+                if (t.target != null) CopyRow("Take profit", t.target)
+                else CopyRow("Take profit", null, null, shown = "No fixed target", note = "Exit when price breaks the opposing line")
                 t.quantity?.let { q -> CopyRow("Quantity", q, DeskAnalysis.qty(q), shown = DeskAnalysis.qty(q), note = t.sizeText) }
             }
             else -> Section("No trade") { Text("Waiting for price to meet all three checks.", style = T.Body, color = Desk.Dim) }
