@@ -14,65 +14,70 @@ import androidx.compose.ui.unit.sp
 import com.signalbot.app.R
 
 /**
- * 7Teenlab palette, tuned for a quick check at dawn: forest greens, cream text, muga-silk gold for
- * anything you act on, tea-leaf green for longs and rhododendron for shorts.
+ * Midnight and saffron: a deep navy night for checking at dawn, saffron for anything you act on,
+ * mint for longs and coral for shorts.
  */
 object Palette {
-    val ForestNight = Color(0xFF0F241D)   // background
-    val Canopy = Color(0xFF17362C)        // raised surfaces
-    val Understory = Color(0xFF1F4537)    // pressed / selected surfaces
-    val Moss = Color(0xFF2E5244)          // hairlines, empty leg slots, ladder track
-    val Cream = Color(0xFFEFE6D0)         // primary text
-    val Lichen = Color(0xFFA8B7A4)        // secondary text
-    val Gold = Color(0xFFD6B25E)          // actions, selection
-    val Long = Color(0xFF8CCB8F)          // tea leaf
-    val Short = Color(0xFFE2667A)         // rhododendron
-    val Warning = Color(0xFFE9A54B)
+    val Night = Color(0xFF0D1326)     // background
+    val Card = Color(0xFF161F3A)      // raised surfaces
+    val Raised = Color(0xFF202B4D)    // pressed / selected surfaces
+    val Line = Color(0xFF2C3A5E)      // hairlines, empty leg slots, ladder track
+    val Ink = Color(0xFFF4F6FB)       // primary text
+    val Muted = Color(0xFF9AA6C2)     // secondary text
+    val Saffron = Color(0xFFF2A541)   // actions, selection
+    val Long = Color(0xFF4FD1A5)      // mint
+    val Short = Color(0xFFFF6B7A)     // coral
+    val Warning = Color(0xFFFFD166)
 
     fun direction(dir: String) = if (dir == "LONG") Long else Short
 }
 
-val Serif = FontFamily(
-    Font(R.font.cormorant_medium, FontWeight.Medium),
-    Font(R.font.cormorant_semibold, FontWeight.SemiBold),
+/** Space Grotesk for headings, asset names and the big numbers. */
+val Display = FontFamily(
+    Font(R.font.grotesk_medium, FontWeight.Medium),
+    Font(R.font.grotesk_semibold, FontWeight.SemiBold),
+    Font(R.font.grotesk_bold, FontWeight.Bold),
 )
 
-/** Plex Sans figures are all the same width, so prices and stops line up in columns. */
+/** Manrope for reading. Figures use tabular digits so prices and stops line up in columns. */
 val Sans = FontFamily(
-    Font(R.font.plex_regular, FontWeight.Normal),
-    Font(R.font.plex_medium, FontWeight.Medium),
-    Font(R.font.plex_semibold, FontWeight.SemiBold),
+    Font(R.font.manrope_regular, FontWeight.Normal),
+    Font(R.font.manrope_medium, FontWeight.Medium),
+    Font(R.font.manrope_semibold, FontWeight.SemiBold),
+    Font(R.font.manrope_bold, FontWeight.Bold),
 )
+
+private const val TNUM = "tnum"
 
 object Type {
     /** The morning sentence: "Two orders for today's open." */
-    val Headline = TextStyle(fontFamily = Serif, fontWeight = FontWeight.SemiBold, fontSize = 36.sp, lineHeight = 38.sp, letterSpacing = (-0.01).em)
-    val Title = TextStyle(fontFamily = Serif, fontWeight = FontWeight.SemiBold, fontSize = 26.sp, lineHeight = 30.sp)
+    val Headline = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp, letterSpacing = (-0.02).em)
+    val Title = TextStyle(fontFamily = Display, fontWeight = FontWeight.SemiBold, fontSize = 24.sp, lineHeight = 28.sp, letterSpacing = (-0.01).em)
     /** Asset names. */
-    val Name = TextStyle(fontFamily = Serif, fontWeight = FontWeight.SemiBold, fontSize = 22.sp, lineHeight = 26.sp)
-    val Figure = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 17.sp, lineHeight = 22.sp)
-    val BigFigure = TextStyle(fontFamily = Serif, fontWeight = FontWeight.SemiBold, fontSize = 52.sp, lineHeight = 54.sp)
+    val Name = TextStyle(fontFamily = Display, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 24.sp, letterSpacing = (-0.01).em)
+    val Figure = TextStyle(fontFamily = Display, fontWeight = FontWeight.Medium, fontSize = 17.sp, lineHeight = 22.sp, fontFeatureSettings = TNUM)
+    val BigFigure = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 52.sp, lineHeight = 56.sp, letterSpacing = (-0.03).em, fontFeatureSettings = TNUM)
     val Body = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 15.sp, lineHeight = 22.sp)
-    val BodyStrong = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, lineHeight = 22.sp)
-    val Small = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 13.sp, lineHeight = 19.sp)
-    val Tiny = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 11.sp, lineHeight = 14.sp)
+    val BodyStrong = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Bold, fontSize = 15.sp, lineHeight = 22.sp)
+    val Small = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 13.sp, lineHeight = 19.sp, fontFeatureSettings = TNUM)
+    val Tiny = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 11.sp, lineHeight = 14.sp, fontFeatureSettings = TNUM)
 }
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
     val scheme = darkColorScheme(
-        primary = Palette.Gold,
-        onPrimary = Palette.ForestNight,
+        primary = Palette.Saffron,
+        onPrimary = Palette.Night,
         secondary = Palette.Long,
-        background = Palette.ForestNight,
-        onBackground = Palette.Cream,
-        surface = Palette.ForestNight,
-        onSurface = Palette.Cream,
-        surfaceVariant = Palette.Canopy,
-        onSurfaceVariant = Palette.Lichen,
-        surfaceContainer = Palette.Canopy,
-        outline = Palette.Moss,
-        outlineVariant = Palette.Moss,
+        background = Palette.Night,
+        onBackground = Palette.Ink,
+        surface = Palette.Night,
+        onSurface = Palette.Ink,
+        surfaceVariant = Palette.Card,
+        onSurfaceVariant = Palette.Muted,
+        surfaceContainer = Palette.Card,
+        outline = Palette.Line,
+        outlineVariant = Palette.Line,
         error = Palette.Short,
     )
     val typography = Typography(

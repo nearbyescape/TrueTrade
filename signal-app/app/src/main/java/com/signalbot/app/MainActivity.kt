@@ -134,9 +134,9 @@ fun AppRoot(vm: MainViewModel = viewModel()) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     val tabs = listOf("Today" to Icons.Filled.Home, "Record" to Icons.Filled.Star, "Journal" to Icons.Filled.DateRange, "Settings" to Icons.Filled.Settings)
     Scaffold(
-        containerColor = Palette.ForestNight,
+        containerColor = Palette.Night,
         bottomBar = {
-            NavigationBar(containerColor = Palette.Canopy) {
+            NavigationBar(containerColor = Palette.Card) {
                 tabs.forEachIndexed { i, (label, icon) ->
                     NavigationBarItem(
                         selected = tab == i,
@@ -144,8 +144,8 @@ fun AppRoot(vm: MainViewModel = viewModel()) {
                         icon = { Icon(icon, contentDescription = null) },
                         label = { Text(label, style = Type.Tiny) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Palette.Gold, selectedTextColor = Palette.Gold, indicatorColor = Palette.Understory,
-                            unselectedIconColor = Palette.Lichen, unselectedTextColor = Palette.Lichen,
+                            selectedIconColor = Palette.Saffron, selectedTextColor = Palette.Saffron, indicatorColor = Palette.Raised,
+                            unselectedIconColor = Palette.Muted, unselectedTextColor = Palette.Muted,
                         ),
                     )
                 }

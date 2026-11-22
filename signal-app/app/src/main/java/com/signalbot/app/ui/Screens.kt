@@ -61,19 +61,19 @@ private val screenPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 28.d
 
 @Composable
 private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
-    Text(text, style = Type.Title, color = Palette.Cream, modifier = modifier.padding(top = 20.dp, bottom = 4.dp))
+    Text(text, style = Type.Title, color = Palette.Ink, modifier = modifier.padding(top = 20.dp, bottom = 4.dp))
 }
 
 @Composable
-private fun GoldAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+private fun AccentAction(text: String, enabled: Boolean = true, onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
     Text(
         text,
         style = Type.BodyStrong,
-        color = if (enabled) Palette.Gold else Palette.Lichen,
+        color = if (enabled) Palette.Saffron else Palette.Muted,
         modifier = Modifier
             .clip(shape)
-            .border(1.dp, if (enabled) Palette.Gold else Palette.Moss, shape)
+            .border(1.dp, if (enabled) Palette.Saffron else Palette.Line, shape)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 18.dp, vertical = 9.dp),
     )
@@ -94,18 +94,18 @@ fun TodayContent(
     LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item {
             Column {
-                Text(dayFmt.format(zoned(nowMs, zone)), style = Type.Small, color = Palette.Lichen)
+                Text(dayFmt.format(zoned(nowMs, zone)), style = Type.Small, color = Palette.Muted)
                 Spacer(Modifier.height(6.dp))
-                Text(if (scan == null) "Not checked yet." else headline(actions.size), style = Type.Headline, color = Palette.Cream)
+                Text(if (scan == null) "Not checked yet." else headline(actions.size), style = Type.Headline, color = Palette.Ink)
                 Spacer(Modifier.height(8.dp))
                 Text(
                     if (scan == null) "Check now to load today's signals."
                     else "Checked at ${clockFmt.format(zoned(scan.timeMs, zone))}. New signals come after each daily close at 05:30.",
-                    style = Type.Small, color = Palette.Lichen,
+                    style = Type.Small, color = Palette.Muted,
                 )
                 message?.let { Text(it, style = Type.Small, color = Palette.Warning, modifier = Modifier.padding(top = 6.dp)) }
                 Spacer(Modifier.height(14.dp))
-                GoldAction(if (scanning) "Checking..." else "Check now", enabled = !scanning, onClick = onCheck)
+                AccentAction(if (scanning) "Checking..." else "Check now", enabled = !scanning, onClick = onCheck)
             }
         }
         items(actions) { OrderTicket(it) }
@@ -129,8 +129,8 @@ fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
             .padding(vertical = 10.dp),
     ) {
         Row(verticalAlignment = Alignment.Bottom) {
-            Text(a.name, style = Type.Name, color = Palette.Cream, modifier = Modifier.weight(1f))
-            Text(if (a.close.isNaN()) "" else formatPrice(a.close), style = Type.Figure, color = Palette.Cream)
+            Text(a.name, style = Type.Name, color = Palette.Ink, modifier = Modifier.weight(1f))
+            Text(if (a.close.isNaN()) "" else formatPrice(a.close), style = Type.Figure, color = Palette.Ink)
         }
         Spacer(Modifier.height(8.dp))
         if (a.error != null) {
@@ -139,7 +139,7 @@ fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
             LegRail(a.open, entering)
             Spacer(Modifier.height(10.dp))
             if (a.open.isEmpty()) {
-                Text(summary(a), style = Type.Small, color = Palette.Lichen)
+                Text(summary(a), style = Type.Small, color = Palette.Muted)
             } else {
                 StopLadder(a.close, a.open, caption = summary(a))
             }
@@ -147,19 +147,19 @@ fun PositionRow(a: AssetView, initiallyExpanded: Boolean = false) {
         if (expanded && a.error == null) {
             Spacer(Modifier.height(12.dp))
             PriceLine(a.closes, a.open)
-            Text("Last ${a.closes.size} daily closes. Dashed lines are your stops.", style = Type.Tiny, color = Palette.Lichen)
+            Text("Last ${a.closes.size} daily closes. Dashed lines are your stops.", style = Type.Tiny, color = Palette.Muted)
             a.open.forEach { o ->
                 Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("${o.leg}-day ${o.direction.lowercase()}", style = Type.BodyStrong, color = Palette.direction(o.direction),
                         modifier = Modifier.width(118.dp))
-                    Text("stop ${formatPrice(o.stop)}", style = Type.Small, color = Palette.Cream, modifier = Modifier.weight(1f))
+                    Text("stop ${formatPrice(o.stop)}", style = Type.Small, color = Palette.Ink, modifier = Modifier.weight(1f))
                     Text(rText(o.rNow), style = Type.Small, color = if (o.rNow >= 0) Palette.Long else Palette.Short)
                 }
             }
-            Text("Exit a leg only when a daily close crosses its stop.", style = Type.Tiny, color = Palette.Lichen,
+            Text("Exit a leg only when a daily close crosses its stop.", style = Type.Tiny, color = Palette.Muted,
                 modifier = Modifier.padding(top = 8.dp))
         }
-        HorizontalDivider(Modifier.padding(top = 14.dp), color = Palette.Moss)
+        HorizontalDivider(Modifier.padding(top = 14.dp), color = Palette.Line)
     }
 }
 
@@ -184,20 +184,20 @@ fun RecordContent(scan: ScanResult?) {
     LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         item {
             Column {
-                Text("What the strategy did by itself over the last 180 days", style = Type.Small, color = Palette.Lichen)
+                Text("What the strategy did by itself over the last 180 days", style = Type.Small, color = Palette.Muted)
                 Spacer(Modifier.height(6.dp))
                 if (scan == null) {
-                    Text("Nothing to show until the first check.", style = Type.Headline, color = Palette.Cream)
+                    Text("Nothing to show until the first check.", style = Type.Headline, color = Palette.Ink)
                 } else {
                     Text(rText(total), style = Type.BigFigure, color = if (total >= 0) Palette.Long else Palette.Short)
-                    Text("from $legs closed legs, after fees and slippage", style = Type.Body, color = Palette.Cream)
+                    Text("from $legs closed legs, after fees and slippage", style = Type.Body, color = Palette.Ink)
                 }
             }
         }
         items(rows) { (name, p) ->
             Column(Modifier.fillMaxWidth().padding(top = 6.dp)) {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(name, style = Type.Name, color = Palette.Cream, modifier = Modifier.weight(1f))
+                    Text(name, style = Type.Name, color = Palette.Ink, modifier = Modifier.weight(1f))
                     Text(rText(p.totalR), style = Type.Figure, color = if (p.totalR >= 0) Palette.Long else Palette.Short)
                 }
                 Spacer(Modifier.height(6.dp))
@@ -205,7 +205,7 @@ fun RecordContent(scan: ScanResult?) {
                 Text(
                     if (p.trades == 0) "No closed legs in this period."
                     else "${p.trades} legs, ${String.format(Locale.US, "%.0f", p.winRate * 100)}% won, ${rText(p.avgR)} on average",
-                    style = Type.Small, color = Palette.Lichen, modifier = Modifier.padding(top = 4.dp),
+                    style = Type.Small, color = Palette.Muted, modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
@@ -215,12 +215,12 @@ fun RecordContent(scan: ScanResult?) {
                 Text(
                     "On Binance futures from July 2023 to November 2026, these rules closed 284 legs on your five assets: " +
                         "about seven a month, 43% winners, +0.64R on average. The months it had never seen averaged +0.35R.",
-                    style = Type.Body, color = Palette.Cream,
+                    style = Type.Body, color = Palette.Ink,
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "Expect losing runs. Legs on one asset lose together; the worst run was 27 legs, about 15% at 0.5% risk per leg.",
-                    style = Type.Small, color = Palette.Lichen,
+                    style = Type.Small, color = Palette.Muted,
                 )
             }
         }
@@ -235,16 +235,16 @@ fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefaul
     LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         item {
             Column {
-                Text("Every order the app has given you", style = Type.Small, color = Palette.Lichen)
-                Text("Journal", style = Type.Headline, color = Palette.Cream)
+                Text("Every order the app has given you", style = Type.Small, color = Palette.Muted)
+                Text("Journal", style = Type.Headline, color = Palette.Ink)
             }
         }
         if (journal.isEmpty()) {
-            item { Text("Orders appear here after the first signal.", style = Type.Body, color = Palette.Lichen) }
+            item { Text("Orders appear here after the first signal.", style = Type.Body, color = Palette.Muted) }
         }
         byDay.forEach { (date, entries) ->
             item {
-                Text(shortDayFmt.format(date), style = Type.Name, color = Palette.Cream, modifier = Modifier.padding(top = 16.dp))
+                Text(shortDayFmt.format(date), style = Type.Name, color = Palette.Ink, modifier = Modifier.padding(top = 16.dp))
             }
             items(entries) { a ->
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
@@ -261,11 +261,11 @@ fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefaul
                     )
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
-                        Text("${a.assetName}: ${verb(a).lowercase().replaceFirstChar { it.uppercase() }}", style = Type.BodyStrong, color = Palette.Cream)
+                        Text("${a.assetName}: ${verb(a).lowercase().replaceFirstChar { it.uppercase() }}", style = Type.BodyStrong, color = Palette.Ink)
                         Text(
                             if (a.action == "ENTER") "Close ${formatPrice(a.close)}, stop ${formatPrice(a.stop)}"
                             else "Close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}",
-                            style = Type.Small, color = Palette.Lichen,
+                            style = Type.Small, color = Palette.Muted,
                         )
                     }
                 }
@@ -292,11 +292,11 @@ fun SettingsContent(
     var enabled by remember { mutableStateOf(initial.enabled) }
     var saved by remember { mutableStateOf(false) }
     val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Palette.Gold, unfocusedBorderColor = Palette.Moss, focusedLabelColor = Palette.Gold,
-        unfocusedLabelColor = Palette.Lichen, cursorColor = Palette.Gold, focusedTextColor = Palette.Cream, unfocusedTextColor = Palette.Cream,
+        focusedBorderColor = Palette.Saffron, unfocusedBorderColor = Palette.Line, focusedLabelColor = Palette.Saffron,
+        unfocusedLabelColor = Palette.Muted, cursorColor = Palette.Saffron, focusedTextColor = Palette.Ink, unfocusedTextColor = Palette.Ink,
     )
     LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text("Settings", style = Type.Headline, color = Palette.Cream) }
+        item { Text("Settings", style = Type.Headline, color = Palette.Ink) }
         item { SectionTitle("Position size") }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -312,12 +312,12 @@ fun SettingsContent(
                     supportingText = { Text("Changes margin, not risk. The app warns if liquidation would come before a stop.") },
                     modifier = Modifier.fillMaxWidth())
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    GoldAction("Save sizes") {
+                    AccentAction("Save sizes") {
                         val s = onSave(SettingsState(capital, risk, leverage, enabled))
                         capital = s.capital; risk = s.riskPerLeg; leverage = s.leverage
                         saved = true
                     }
-                    if (saved) Text("Saved. New sizes show from the next check.", style = Type.Small, color = Palette.Lichen,
+                    if (saved) Text("Saved. New sizes show from the next check.", style = Type.Small, color = Palette.Muted,
                         modifier = Modifier.padding(start = 14.dp))
                 }
             }
@@ -326,15 +326,15 @@ fun SettingsContent(
         items(assets) { asset ->
             Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(asset.displayName, style = Type.Name, color = Palette.Cream)
-                    Text("${asset.routes.first().symbol} perpetual on Binance, Bybit as backup", style = Type.Small, color = Palette.Lichen)
+                    Text(asset.displayName, style = Type.Name, color = Palette.Ink)
+                    Text("${asset.routes.first().symbol} perpetual on Binance, Bybit as backup", style = Type.Small, color = Palette.Muted)
                 }
                 Switch(
                     checked = enabled[asset.id] == true,
                     onCheckedChange = { on -> enabled = enabled + (asset.id to on); onToggle(asset.id, on) },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Palette.ForestNight, checkedTrackColor = Palette.Gold,
-                        uncheckedThumbColor = Palette.Lichen, uncheckedTrackColor = Palette.Canopy, uncheckedBorderColor = Palette.Moss,
+                        checkedThumbColor = Palette.Night, checkedTrackColor = Palette.Saffron,
+                        uncheckedThumbColor = Palette.Muted, uncheckedTrackColor = Palette.Card, uncheckedBorderColor = Palette.Line,
                     ),
                 )
             }
@@ -343,8 +343,8 @@ fun SettingsContent(
         item {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("The app checks after 05:30 every morning and every three hours after that. Some phones pause apps to save battery; " +
-                    "if signals arrive late, let this app run without battery limits.", style = Type.Body, color = Palette.Cream)
-                GoldAction("Open battery settings", onClick = onBatterySettings)
+                    "if signals arrive late, let this app run without battery limits.", style = Type.Body, color = Palette.Ink)
+                AccentAction("Open battery settings", onClick = onBatterySettings)
             }
         }
         item { SectionTitle("How it decides") }
@@ -353,7 +353,7 @@ fun SettingsContent(
                 "Each asset has four legs: 20, 30, 60 and 90 days. A leg buys when the daily close is the highest of its period and " +
                     "above the 200-day average, or sells short on the mirror image. Its stop sits at the middle of that period's closing " +
                     "range and only moves your way. A leg closes when a daily close crosses its stop. Not financial advice: paper trade first.",
-                style = Type.Small, color = Palette.Lichen,
+                style = Type.Small, color = Palette.Muted,
             )
         }
     }

@@ -57,7 +57,7 @@ fun verb(a: ActionView): String = when {
 }
 
 /**
- * An order for the next open, styled as a ticket: gold edge = something to do.
+ * An order for the next open, styled as a ticket: saffron edge = something to do.
  * Tapping "Why" opens the reasons.
  */
 @Composable
@@ -67,18 +67,18 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min) // lets the gold edge match the ticket's height
+            .height(IntrinsicSize.Min) // lets the saffron edge match the ticket's height
             .clip(RoundedCornerShape(14.dp))
-            .background(Palette.Canopy)
+            .background(Palette.Card)
             .animateContentSize(),
     ) {
-        Box(Modifier.width(4.dp).fillMaxHeight().background(Palette.Gold))
+        Box(Modifier.width(4.dp).fillMaxHeight().background(Palette.Saffron))
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 12.dp)) {
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(a.assetName, style = Type.Name, color = Palette.Cream, modifier = Modifier.weight(1f))
+                Text(a.assetName, style = Type.Name, color = Palette.Ink, modifier = Modifier.weight(1f))
                 Text(verb(a), style = Type.BodyStrong, color = dirColor)
             }
-            Text("${a.leg}-day leg, at the next open", style = Type.Small, color = Palette.Lichen)
+            Text("${a.leg}-day leg, at the next open", style = Type.Small, color = Palette.Muted)
             Spacer(Modifier.height(10.dp))
             if (a.action == "ENTER") {
                 Row {
@@ -87,19 +87,19 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
                 }
                 a.sizeText?.let {
                     Spacer(Modifier.height(8.dp))
-                    Text(it, style = Type.Small, color = Palette.Lichen)
+                    Text(it, style = Type.Small, color = Palette.Muted)
                 }
             } else {
-                Text("Daily close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}.", style = Type.Small, color = Palette.Lichen)
+                Text("Daily close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}.", style = Type.Small, color = Palette.Muted)
             }
             Text(
                 if (open) "Hide reasons" else "Why",
                 style = Type.BodyStrong,
-                color = Palette.Gold,
+                color = Palette.Saffron,
                 modifier = Modifier.padding(top = 8.dp).clickable { open = !open }.padding(vertical = 4.dp),
             )
             if (open) {
-                a.reasons.forEach { Text(it, style = Type.Small, color = Palette.Cream, modifier = Modifier.padding(top = 4.dp)) }
+                a.reasons.forEach { Text(it, style = Type.Small, color = Palette.Ink, modifier = Modifier.padding(top = 4.dp)) }
             }
         }
     }
@@ -108,14 +108,14 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
 @Composable
 fun Figure(label: String, value: String, modifier: Modifier = Modifier) {
     Column(modifier) {
-        Text(label, style = Type.Tiny, color = Palette.Lichen)
-        Text(value, style = Type.Figure, color = Palette.Cream)
+        Text(label, style = Type.Tiny, color = Palette.Muted)
+        Text(value, style = Type.Figure, color = Palette.Ink)
     }
 }
 
 /**
  * The four legs of an asset, 20 to 90 days. Filled = in a trade (green long, pink short),
- * outlined = flat, gold outline = entering at the next open.
+ * outlined = flat, saffron outline = entering at the next open.
  */
 @Composable
 fun LegRail(open: List<OpenLegView>, entering: List<ActionView>, modifier: Modifier = Modifier) {
@@ -135,13 +135,13 @@ fun LegRail(open: List<OpenLegView>, entering: List<ActionView>, modifier: Modif
                     .height(26.dp)
                     .clip(shape)
                     .background(fill?.copy(alpha = 0.22f) ?: Color.Transparent)
-                    .border(1.dp, when { e != null -> Palette.Gold; fill != null -> fill; else -> Palette.Moss }, shape),
+                    .border(1.dp, when { e != null -> Palette.Saffron; fill != null -> fill; else -> Palette.Line }, shape),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     "$leg",
                     style = Type.Tiny,
-                    color = fill ?: if (e != null) Palette.Gold else Palette.Lichen,
+                    color = fill ?: if (e != null) Palette.Saffron else Palette.Muted,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -167,21 +167,21 @@ fun StopLadder(price: Double, open: List<OpenLegView>, modifier: Modifier = Modi
         Canvas(Modifier.fillMaxWidth().height(22.dp)) {
             fun x(v: Double) = ((v - min) / (max - min)).toFloat() * size.width
             val mid = size.height / 2
-            drawLine(Palette.Moss, Offset(0f, mid), Offset(size.width, mid), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
+            drawLine(Palette.Line, Offset(0f, mid), Offset(size.width, mid), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
             open.forEach { o ->
                 val c = Palette.direction(o.direction)
                 // The span you're protecting: from the stop to the price.
                 drawLine(c.copy(alpha = 0.35f), Offset(x(o.stop), mid), Offset(x(price), mid), strokeWidth = 4.dp.toPx())
                 drawLine(c, Offset(x(o.stop), mid - 8.dp.toPx()), Offset(x(o.stop), mid + 8.dp.toPx()), strokeWidth = 2.dp.toPx(), cap = StrokeCap.Round)
             }
-            drawCircle(Palette.Cream, radius = 5.dp.toPx(), center = Offset(x(price), mid))
+            drawCircle(Palette.Ink, radius = 5.dp.toPx(), center = Offset(x(price), mid))
         }
         val pct = abs(price - nearest.stop) / price * 100
-        caption?.let { Text(it, style = Type.Small, color = Palette.Cream, modifier = Modifier.padding(top = 2.dp)) }
+        caption?.let { Text(it, style = Type.Small, color = Palette.Ink, modifier = Modifier.padding(top = 2.dp)) }
         Text(
             "Nearest stop ${formatPrice(nearest.stop)} (${nearest.leg}-day), ${String.format(Locale.US, "%.1f", pct)}% away",
             style = Type.Tiny,
-            color = Palette.Lichen,
+            color = Palette.Muted,
         )
     }
 }
@@ -206,8 +206,8 @@ fun PriceLine(closes: List<Double>, open: List<OpenLegView>, modifier: Modifier 
         }
         val path = Path()
         values.forEachIndexed { i, v -> if (i == 0) path.moveTo(0f, y(v)) else path.lineTo(i * step, y(v)) }
-        drawPath(path, Palette.Cream, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round))
-        drawCircle(Palette.Gold, radius = 3.5.dp.toPx(), center = Offset(size.width, y(values.last())))
+        drawPath(path, Palette.Ink, style = Stroke(width = 1.6.dp.toPx(), cap = StrokeCap.Round))
+        drawCircle(Palette.Saffron, radius = 3.5.dp.toPx(), center = Offset(size.width, y(values.last())))
     }
 }
 
@@ -216,7 +216,7 @@ fun PriceLine(closes: List<Double>, open: List<OpenLegView>, modifier: Modifier 
 fun RBar(value: Double, maxAbs: Double, modifier: Modifier = Modifier) {
     Canvas(modifier.fillMaxWidth().height(10.dp)) {
         val mid = size.width / 2
-        drawLine(Palette.Moss, Offset(mid, 0f), Offset(mid, size.height), strokeWidth = 1.dp.toPx())
+        drawLine(Palette.Line, Offset(mid, 0f), Offset(mid, size.height), strokeWidth = 1.dp.toPx())
         if (maxAbs > 0 && !value.isNaN()) {
             val w = (abs(value) / maxAbs).toFloat().coerceAtMost(1f) * mid
             val c = if (value >= 0) Palette.Long else Palette.Short

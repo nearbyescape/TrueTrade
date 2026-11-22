@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="forest_night">#FF0F241D</color>
-    <color name="canopy">#FF17362C</color>
+    <color name="night">#FF0D1326</color>
+    <color name="card">#FF161F3A</color>
 </resources>

@@ -45,7 +45,7 @@ class ScreenshotTest {
 
     private fun shot(name: String, content: @Composable () -> Unit) =
         captureRoboImage("build/screenshots/$name.png") {
-            AppTheme { Surface(Modifier.fillMaxSize(), color = Palette.ForestNight) { content() } }
+            AppTheme { Surface(Modifier.fillMaxSize(), color = Palette.Night) { content() } }
         }
 
     private fun closes(start: Double, drift: Double, n: Int = 120) =
