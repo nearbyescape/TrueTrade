@@ -145,7 +145,7 @@ class ScreenshotTest {
         (1..300).asSequence().map { seed ->
             val s = candles(seed)
             SetupAnalysis.build("BTC", "Bitcoin", tf, s, s, cfg, useTrend = true,
-                sizeText = { _, _ -> "Size 0.2300 units (21,000), margin 10,500, risk 1,000" })
+                sizing = { _, _ -> com.signalbot.app.scan.Sizing("Size 0.2300 units (21,000), margin 10,500, risk 1,000", 0.23) })
         }.firstOrNull { v ->
             val c = v.chart!!
             c.markers.count { it.kind == MarkerKind.BUY || it.kind == MarkerKind.SELL } >= 2 &&
@@ -160,7 +160,11 @@ class ScreenshotTest {
     private val brEntry = ActionView("ETH", "Ethereum", 0, "ENTER", "LONG", 3_412.6, 3_268.0, close,
         listOf("Buy at the next open. Broke the downtrend line, pulled back to it and the candle closed above it. Stop 3,268.0, " +
             "trail it under each new swing", "Line from 12 Oct (3,980.2) through 2 Nov (3,610.4), 3 touches"),
-        "Size 6.9000 units (23,547), margin 11,774, risk 1,000")
+        "Size 6.9000 units (23,547), margin 11,774, risk 1,000", target = 3_655.0, quantity = 6.9)
+
+    @Test fun orderDetails() = shot("11_order_details") {
+        com.signalbot.app.ui.OrderDetailsContent(brEntry, onClose = {})
+    }
 
     @Test fun setupToday() = shot("8_setup_today") {
         val views = listOf(

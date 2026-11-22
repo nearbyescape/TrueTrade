@@ -45,12 +45,14 @@ class Scanner(context: Context) {
         val replay = engine.replay(data)
 
         val actions = replay.events.filter { it.dayIndex == last }.map { e ->
-            val sizeText = if (e.action == LegAction.ENTER) {
-                val s = PositionSizer.size(settings.capital, settings.riskPerLegPct / 100, e.close, e.stop, settings.leverage)
+            val size = if (e.action == LegAction.ENTER)
+                PositionSizer.size(settings.capital, settings.riskPerLegPct / 100, e.close, e.stop, settings.leverage) else null
+            val sizeText = size?.let { s ->
                 "Size ${num(s.quantity)} units (${money(s.notional)}), margin ${money(s.margin)}, risk ${money(s.riskAmount)}" +
                     if (s.liquidationSafe) "" else ". Liquidation too close: use at most ${PositionSizer.maxSafeLeverage(e.close, e.stop)}x"
-            } else null
-            ActionView(asset.id, asset.displayName, e.leg, e.action.name, e.direction.name, e.close, e.stop, e.timeMs, e.reasons, sizeText)
+            }
+            ActionView(asset.id, asset.displayName, e.leg, e.action.name, e.direction.name, e.close, e.stop, e.timeMs, e.reasons, sizeText,
+                quantity = size?.quantity)
         }
 
         val close = d.close[last]

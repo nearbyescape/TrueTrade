@@ -241,11 +241,13 @@ fun RecordContent(
 
 @Composable
 fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefault()) {
+    var details by remember { mutableStateOf<ActionView?>(null) }
+    details?.let { OrderDetailsDialog(it) { details = null } }
     val byDay = journal.groupBy { zoned(it.timeMs - 1, zone).toLocalDate() }.toSortedMap(compareByDescending { it })
     LazyColumn(contentPadding = screenPadding, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         item {
             Column {
-                Text("Every order the app has given you", style = Type.Small, color = Palette.Muted)
+                Text("Every order the app has given you. Tap one to copy its prices.", style = Type.Small, color = Palette.Muted)
                 Text("Journal", style = Type.Headline, color = Palette.Ink)
             }
         }
@@ -257,7 +259,7 @@ fun JournalContent(journal: List<ActionView>, zone: ZoneId = ZoneId.systemDefaul
                 Text(shortDayFmt.format(date), style = Type.Name, color = Palette.Ink, modifier = Modifier.padding(top = 16.dp))
             }
             items(entries) { a ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
+                Row(Modifier.fillMaxWidth().clickable { details = a }.padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
                     Text(
                         if (a.leg == 0) "B&R" else "${a.leg}d",
                         style = Type.Tiny,

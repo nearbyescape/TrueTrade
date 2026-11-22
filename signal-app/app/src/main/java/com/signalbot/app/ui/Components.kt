@@ -67,6 +67,8 @@ fun verb(a: ActionView): String = when {
 @Composable
 fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
     var open by remember { mutableStateOf(false) }
+    var details by remember { mutableStateOf(false) }
+    if (details) OrderDetailsDialog(a) { details = false }
     val dirColor = Palette.direction(a.direction)
     Row(
         modifier
@@ -105,12 +107,21 @@ fun OrderTicket(a: ActionView, modifier: Modifier = Modifier) {
             } else {
                 Text("Daily close ${formatPrice(a.close)} crossed the stop ${formatPrice(a.stop)}.", style = Type.Small, color = Palette.Muted)
             }
-            Text(
-                if (open) "Hide reasons" else "Why",
-                style = Type.BodyStrong,
-                color = Palette.Saffron,
-                modifier = Modifier.padding(top = 8.dp).clickable { open = !open }.padding(vertical = 4.dp),
-            )
+            Row(Modifier.padding(top = 8.dp)) {
+                Text(
+                    if (open) "Hide reasons" else "Why",
+                    style = Type.BodyStrong,
+                    color = Palette.Saffron,
+                    modifier = Modifier.clickable { open = !open }.padding(vertical = 4.dp),
+                )
+                Spacer(Modifier.width(24.dp))
+                Text(
+                    "Copy prices",
+                    style = Type.BodyStrong,
+                    color = Palette.Saffron,
+                    modifier = Modifier.clickable { details = true }.padding(vertical = 4.dp),
+                )
+            }
             if (open) {
                 a.reasons.forEach { Text(it, style = Type.Small, color = Palette.Ink, modifier = Modifier.padding(top = 4.dp)) }
             }

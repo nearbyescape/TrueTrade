@@ -62,10 +62,11 @@ class SetupScanner(context: Context) {
             emptyList(), null, null, e.message ?: e.javaClass.simpleName)
     }
 
-    private fun sizeText(entry: Double, stop: Double): String {
+    private fun sizeText(entry: Double, stop: Double): Sizing {
         val s = PositionSizer.size(settings.capital, settings.setupRiskPct / 100, entry, stop, settings.leverage)
-        return "Size ${num(s.quantity)} units (${money(s.notional)}), margin ${money(s.margin)}, risk ${money(s.riskAmount)}" +
-            if (s.liquidationSafe) "" else ". Liquidation too close: use at most ${PositionSizer.maxSafeLeverage(entry, stop)}x"
+        return Sizing("Size ${num(s.quantity)} units (${money(s.notional)}), margin ${money(s.margin)}, risk ${money(s.riskAmount)}" +
+            if (s.liquidationSafe) "" else ". Liquidation too close: use at most ${PositionSizer.maxSafeLeverage(entry, stop)}x",
+            s.quantity)
     }
 
     /** Closed candles of [tf] and daily candles (for the trend filter), from the first route that works. */

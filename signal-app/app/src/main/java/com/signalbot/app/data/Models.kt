@@ -16,6 +16,10 @@ data class ActionView(
     val timeMs: Long,
     val reasons: List<String>,
     val sizeText: String?,
+    /** Take-profit price, when the strategy uses one. */
+    val target: Double? = null,
+    /** Position size in units of the asset, for entries. */
+    val quantity: Double? = null,
 ) {
     /** Unique per decision, so the same signal never notifies twice. */
     val key: String get() = "$assetId|$leg|$action|$direction|$timeMs"
@@ -60,12 +64,15 @@ fun ActionView.toJson(): JSONObject = JSONObject()
     .put("assetId", assetId).put("assetName", assetName).put("leg", leg).put("action", action).put("direction", direction)
     .put("close", close.safe()).put("stop", stop.safe()).put("timeMs", timeMs)
     .put("reasons", JSONArray(reasons)).put("sizeText", sizeText ?: JSONObject.NULL)
+    .put("target", target?.safe() ?: JSONObject.NULL).put("quantity", quantity?.safe() ?: JSONObject.NULL)
 
 fun actionFromJson(o: JSONObject) = ActionView(
     o.getString("assetId"), o.getString("assetName"), o.getInt("leg"), o.getString("action"), o.getString("direction"),
     o.d("close"), o.d("stop"), o.getLong("timeMs"),
     o.getJSONArray("reasons").let { a -> List(a.length()) { a.getString(it) } },
     if (o.isNull("sizeText")) null else o.getString("sizeText"),
+    if (!o.has("target") || o.isNull("target")) null else o.getDouble("target"),
+    if (!o.has("quantity") || o.isNull("quantity")) null else o.getDouble("quantity"),
 )
 
 private fun OpenLegView.toJson(): JSONObject = JSONObject()

@@ -30,6 +30,9 @@ import java.util.Locale
  * the trade in progress and the chart overlays. Pure (no Android, no network), so the screenshot tests
  * and the background scan use exactly the same code.
  */
+/** Position size for an entry: the sentence shown, and the quantity to type in. */
+data class Sizing(val text: String, val quantity: Double)
+
 object SetupAnalysis {
     val CRITERIA = listOf("Price broke the trendline", "Price pulled back and retested it", "The candle closed and respected it")
 
@@ -41,7 +44,7 @@ object SetupAnalysis {
         d1: Series?,
         cfg: BreakRetestConfig,
         useTrend: Boolean,
-        sizeText: (entry: Double, stop: Double) -> String? = { _, _ -> null },
+        sizing: (entry: Double, stop: Double) -> Sizing? = { _, _ -> null },
         window: Int = 160,
         stepActions: Boolean = false,
     ): SetupView {
@@ -62,9 +65,11 @@ object SetupAnalysis {
                 BrAction.EXIT_STOP, BrAction.EXIT_TARGET -> "EXIT"
                 else -> e.action.name
             }
+            val size = if (e.action == BrAction.ENTRY && e.stop != null) sizing(e.price, e.stop!!) else null
             ActionView(assetId, name, 0, action, e.direction.name, e.price, e.stop ?: Double.NaN,
                 s.openTime[e.index] + tf.millis, listOfNotNull(e.text, e.line?.let { lineText(it, s, tf) }),
-                if (e.action == BrAction.ENTRY && e.stop != null) sizeText(e.price, e.stop!!) else null)
+                size?.text, target = if (e.action == BrAction.ENTRY || e.action == BrAction.EXIT_TARGET) e.target else null,
+                quantity = size?.quantity)
         }
 
         val open = r.open
