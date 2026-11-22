@@ -60,3 +60,13 @@ tasks.register<JavaExec>("scan") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.signalbot.engine.tools.ScanKt")
 }
+
+// ./gradlew :engine:breakretest --args="2023-01 2026-11-20"
+// Backtests the trendline break-and-retest setup on Binance futures history.
+tasks.register<JavaExec>("breakretest") {
+    group = "verification"
+    description = "Backtest the break-and-retest setup on real Binance futures history."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.signalbot.engine.tools.BreakRetestStudyKt")
+    maxHeapSize = "3g"
+}

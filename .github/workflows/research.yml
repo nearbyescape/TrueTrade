@@ -1,0 +1,62 @@
+name: Research backtest
+
+# Runs strategy studies on real Binance futures history. Push to the 'research' branch to run.
+on:
+  push:
+    branches: [research]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research
+  cancel-in-progress: true
+
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/cache@v4
+        with:
+          path: signal-app/backtest-out/cache
+          key: binance-archive-${{ hashFiles('signal-app/engine/src/main/kotlin/com/signalbot/engine/history/**') }}-v1
+          restore-keys: binance-archive-
+      - name: Engine tests
+        continue-on-error: true
+        working-directory: signal-app
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew --no-daemon :engine:test --tests '*BreakRetest*' 2>&1 | tee "$GITHUB_WORKSPACE/tests.log"
+      - name: Study
+        continue-on-error: true
+        working-directory: signal-app
+        run: |
+          set -o pipefail
+          ARGS=$(cat research-args.txt 2>/dev/null || echo "2023-01 2026-11-21 backtest-out")
+          ./gradlew --no-daemon :engine:breakretest --args="$ARGS" 2>&1 | tee "$GITHUB_WORKSPACE/study.log"
+      - name: Publish results
+        if: always()
+        run: |
+          mkdir -p /tmp/out
+          cp tests.log study.log /tmp/out/ 2>/dev/null || true
+          cp signal-app/backtest-out/*.txt /tmp/out/ 2>/dev/null || true
+          cp -r signal-app/engine/build/test-results /tmp/out/ 2>/dev/null || true
+          git config user.name "build-bot"
+          git config user.email "build-bot@users.noreply.github.com"
+          git checkout --orphan research-logs
+          git rm -rf --cached . > /dev/null
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r /tmp/out/. .
+          echo "${{ job.status }} ${{ github.sha }} run ${{ github.run_number }}" > status.txt
+          git add -A
+          git commit -m "Research results for ${{ github.sha }}"
+          git push -f origin research-logs
