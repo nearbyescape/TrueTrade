@@ -1,0 +1,99 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :engine:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :engine:compileKotlin UP-TO-DATE
+> Task :engine:compileJava NO-SOURCE
+> Task :engine:processResources NO-SOURCE
+> Task :engine:classes UP-TO-DATE
+
+> Task :engine:breakretest
+Loading 1h history............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Loading 15m and 5m history................................................................................................................................................................................................................................................................................................................................................................................................
+
+================ 15m candles (last 12 months)
+
+== previous app rules (swing stop, trend filter)  (0s)
+  development   865 trades (22.10/wk), win 17%, avg -0.65R, total -566.1R, PF 0.39, maxDD 567.0R, avg win 2.47R, fees 0.31R/trade, hold 3.8h
+  UNSEEN        301 trades (26.01/wk), win 21%, avg -0.61R, total -184.7R, PF 0.42, maxDD 211.3R, avg win 2.13R, fees 0.32R/trade, hold 3.9h
+  full         1166 trades (22.99/wk), win 18%, avg -0.64R, total -750.9R, PF 0.39, maxDD 778.2R, avg win 2.37R, fees 0.32R/trade, hold 3.8h
+    per asset (trades/avg): BTC 194/-0.77R  ETH 230/-0.71R  GOLD 92/-0.69R  SILVER 123/-0.10R  SOL 268/-0.59R  XRP 259/-0.78R
+
+== her stop on the opposing line  (0s)
+  development   828 trades (21.15/wk), win 17%, avg -0.66R, total -548.9R, PF 0.36, maxDD 549.0R, avg win 2.16R, fees 0.32R/trade, hold 3.2h
+  UNSEEN        287 trades (24.80/wk), win 20%, avg -0.64R, total -183.1R, PF 0.39, maxDD 196.6R, avg win 1.98R, fees 0.32R/trade, hold 3.5h
+  full         1115 trades (21.99/wk), win 18%, avg -0.66R, total -732.1R, PF 0.37, maxDD 745.5R, avg win 2.11R, fees 0.32R/trade, hold 3.3h
+    per asset (trades/avg): BTC 184/-0.79R  ETH 221/-0.71R  GOLD 84/-0.93R  SILVER 119/-0.19R  SOL 264/-0.60R  XRP 243/-0.70R
+
+== her top-down lines  (0s)
+  development   983 trades (25.11/wk), win 17%, avg -0.64R, total -633.0R, PF 0.38, maxDD 633.8R, avg win 2.28R, fees 0.31R/trade, hold 3.8h
+  UNSEEN        328 trades (28.35/wk), win 23%, avg -0.55R, total -179.9R, PF 0.46, maxDD 199.6R, avg win 2.05R, fees 0.32R/trade, hold 4.2h
+  full         1311 trades (25.85/wk), win 19%, avg -0.62R, total -812.9R, PF 0.40, maxDD 833.4R, avg win 2.21R, fees 0.31R/trade, hold 3.9h
+    per asset (trades/avg): BTC 217/-0.59R  ETH 259/-0.69R  GOLD 108/-0.76R  SILVER 139/-0.10R  SOL 298/-0.61R  XRP 290/-0.79R
+
+== HER FULL METHOD: top-down + opposing-line stop + trend filter  (0s)
+  development   949 trades (24.24/wk), win 18%, avg -0.66R, total -623.0R, PF 0.35, maxDD 623.1R, avg win 2.01R, fees 0.31R/trade, hold 3.2h
+  UNSEEN        317 trades (27.40/wk), win 22%, avg -0.61R, total -193.7R, PF 0.39, maxDD 199.9R, avg win 1.80R, fees 0.32R/trade, hold 3.8h
+  full         1266 trades (24.96/wk), win 19%, avg -0.65R, total -816.7R, PF 0.36, maxDD 822.9R, avg win 1.95R, fees 0.31R/trade, hold 3.3h
+    per asset (trades/avg): BTC 207/-0.58R  ETH 252/-0.70R  GOLD 104/-1.00R  SILVER 136/-0.17R  SOL 294/-0.61R  XRP 273/-0.78R
+
+== her full method, no trend filter  (0s)
+  development  1988 trades (50.79/wk), win 17%, avg -0.65R, total -1288.4R, PF 0.36, maxDD 1289.4R, avg win 2.15R, fees 0.31R/trade, hold 3.3h
+  UNSEEN        580 trades (50.12/wk), win 20%, avg -0.67R, total -387.2R, PF 0.34, maxDD 391.0R, avg win 1.69R, fees 0.31R/trade, hold 3.6h
+  full         2568 trades (50.64/wk), win 18%, avg -0.65R, total -1675.6R, PF 0.36, maxDD 1679.4R, avg win 2.04R, fees 0.31R/trade, hold 3.4h
+    per asset (trades/avg): BTC 406/-0.67R  ETH 482/-0.68R  GOLD 239/-0.84R  SILVER 348/-0.38R  SOL 564/-0.65R  XRP 529/-0.72R
+
+== her full method, take profit at S/R  (0s)
+  development  1010 trades (25.80/wk), win 23%, avg -0.66R, total -669.0R, PF 0.22, maxDD 669.0R, avg win 0.80R, fees 0.31R/trade, hold 1.7h
+  UNSEEN        349 trades (30.16/wk), win 23%, avg -0.66R, total -231.4R, PF 0.20, maxDD 233.0R, avg win 0.72R, fees 0.31R/trade, hold 1.9h
+  full         1359 trades (26.80/wk), win 23%, avg -0.66R, total -900.5R, PF 0.22, maxDD 902.0R, avg win 0.78R, fees 0.31R/trade, hold 1.7h
+    per asset (trades/avg): BTC 222/-0.74R  ETH 264/-0.62R  GOLD 109/-0.92R  SILVER 147/-0.43R  SOL 316/-0.62R  XRP 301/-0.71R
+
+================ 5m candles (last 12 months)
+
+== previous app rules (swing stop, trend filter)  (1s)
+  development  1705 trades (43.56/wk), win 17%, avg -0.77R, total -1313.0R, PF 0.29, maxDD 1313.1R, avg win 1.89R, fees 0.38R/trade, hold 1.4h
+  UNSEEN        490 trades (42.35/wk), win 18%, avg -0.65R, total -318.2R, PF 0.40, maxDD 318.2R, avg win 2.36R, fees 0.38R/trade, hold 1.4h
+  full         2195 trades (43.28/wk), win 17%, avg -0.74R, total -1631.2R, PF 0.32, maxDD 1631.3R, avg win 2.00R, fees 0.38R/trade, hold 1.4h
+    per asset (trades/avg): BTC 306/-0.78R  ETH 447/-0.72R  GOLD 108/-0.89R  SILVER 268/-0.79R  SOL 576/-0.71R  XRP 490/-0.71R
+
+== her stop on the opposing line  (1s)
+  development  1575 trades (40.24/wk), win 17%, avg -0.76R, total -1200.9R, PF 0.29, maxDD 1200.9R, avg win 1.77R, fees 0.38R/trade, hold 1.2h
+  UNSEEN        455 trades (39.32/wk), win 18%, avg -0.66R, total -298.6R, PF 0.40, maxDD 299.3R, avg win 2.36R, fees 0.38R/trade, hold 1.3h
+  full         2030 trades (40.03/wk), win 18%, avg -0.74R, total -1499.5R, PF 0.31, maxDD 1500.1R, avg win 1.90R, fees 0.38R/trade, hold 1.2h
+    per asset (trades/avg): BTC 278/-0.76R  ETH 416/-0.77R  GOLD 102/-0.92R  SILVER 245/-0.79R  SOL 532/-0.68R  XRP 457/-0.70R
+
+== her top-down lines  (2s)
+  development  1894 trades (48.39/wk), win 18%, avg -0.74R, total -1399.2R, PF 0.31, maxDD 1399.2R, avg win 1.89R, fees 0.38R/trade, hold 1.4h
+  UNSEEN        554 trades (47.88/wk), win 18%, avg -0.69R, total -380.4R, PF 0.36, maxDD 380.4R, avg win 2.18R, fees 0.38R/trade, hold 1.4h
+  full         2448 trades (48.27/wk), win 18%, avg -0.73R, total -1779.6R, PF 0.33, maxDD 1779.6R, avg win 1.96R, fees 0.38R/trade, hold 1.4h
+    per asset (trades/avg): BTC 353/-0.81R  ETH 491/-0.66R  GOLD 132/-0.92R  SILVER 289/-0.77R  SOL 632/-0.69R  XRP 551/-0.71R
+
+== HER FULL METHOD: top-down + opposing-line stop + trend filter  (2s)
+  development  1756 trades (44.86/wk), win 19%, avg -0.72R, total -1268.7R, PF 0.31, maxDD 1268.7R, avg win 1.77R, fees 0.38R/trade, hold 1.3h
+  UNSEEN        516 trades (44.59/wk), win 18%, avg -0.69R, total -356.5R, PF 0.36, maxDD 357.2R, avg win 2.15R, fees 0.38R/trade, hold 1.3h
+  full         2272 trades (44.80/wk), win 18%, avg -0.72R, total -1625.2R, PF 0.32, maxDD 1625.9R, avg win 1.86R, fees 0.38R/trade, hold 1.3h
+    per asset (trades/avg): BTC 324/-0.80R  ETH 456/-0.67R  GOLD 120/-0.97R  SILVER 269/-0.75R  SOL 584/-0.64R  XRP 519/-0.70R
+
+== her full method, no trend filter  (2s)
+  development  3707 trades (94.70/wk), win 18%, avg -0.71R, total -2633.2R, PF 0.32, maxDD 2635.1R, avg win 1.78R, fees 0.37R/trade, hold 1.3h
+  UNSEEN       1014 trades (87.63/wk), win 16%, avg -0.80R, total -813.3R, PF 0.27, maxDD 814.3R, avg win 1.80R, fees 0.38R/trade, hold 1.3h
+  full         4721 trades (93.09/wk), win 18%, avg -0.73R, total -3446.5R, PF 0.30, maxDD 3447.5R, avg win 1.79R, fees 0.37R/trade, hold 1.3h
+    per asset (trades/avg): BTC 634/-0.75R  ETH 922/-0.74R  GOLD 300/-0.86R  SILVER 690/-0.64R  SOL 1170/-0.73R  XRP 1005/-0.74R
+
+== her full method, take profit at S/R  (2s)
+  development  1876 trades (47.93/wk), win 17%, avg -0.73R, total -1376.1R, PF 0.18, maxDD 1376.1R, avg win 0.95R, fees 0.37R/trade, hold 0.6h
+  UNSEEN        557 trades (48.14/wk), win 17%, avg -0.71R, total -395.5R, PF 0.21, maxDD 396.2R, avg win 1.09R, fees 0.38R/trade, hold 0.7h
+  full         2433 trades (47.97/wk), win 17%, avg -0.73R, total -1771.6R, PF 0.19, maxDD 1772.3R, avg win 0.98R, fees 0.37R/trade, hold 0.7h
+    per asset (trades/avg): BTC 344/-0.79R  ETH 486/-0.67R  GOLD 123/-0.86R  SILVER 287/-0.78R  SOL 626/-0.67R  XRP 567/-0.75R
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1795325383592.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 6m 14s
+2 actionable tasks: 1 executed, 1 up-to-date

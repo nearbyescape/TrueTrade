@@ -1,0 +1,44 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :engine:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :engine:processResources NO-SOURCE
+> Task :engine:processTestResources
+> Task :engine:compileKotlin
+> Task :engine:compileJava NO-SOURCE
+> Task :engine:classes UP-TO-DATE
+> Task :engine:jar
+> Task :engine:compileTestKotlin
+> Task :engine:compileTestJava NO-SOURCE
+> Task :engine:testClasses
+
+> Task :engine:test
+
+BreakRetestTest > break, retest and close give a long signal at the retest candle() PASSED
+
+BreakRetestTest > no retest within the window means no trade() PASSED
+
+BreakRetestTest > a close back through the broken line cancels the setup() PASSED
+
+BreakRetestTest > target mode exits at the nearest resistance() PASSED
+
+BreakRetestTest > decisions never use later candles() PASSED
+
+BreakRetestTest > her stop follows the opposing line and is tighter than the flat swing stop() PASSED
+
+BreakRetestTest > top-down lines never use higher candles that have not closed() PASSED
+
+BreakRetestTest > stop is hit when price falls back() PASSED
+
+BreakRetestTest > the mirror image gives the same short() PASSED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795325348972.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 34s
+5 actionable tasks: 5 executed
