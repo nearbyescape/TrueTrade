@@ -48,8 +48,8 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
     val tick = MutableStateFlow(0L)
     val feed = MutableStateFlow(Feed.CONNECTING)
     val lastUpdate = MutableStateFlow(0L)
-    /** Called on a background thread whenever a candle closes. */
-    var onClose: (Book) -> Unit = {}
+    /** Called whenever candles close: the book and how many new closed candles it got (more than 1 after a catch-up). */
+    var onClose: (Book, Int) -> Unit = { _, _ -> }
 
     private val http = UrlConnectionHttp(connectTimeoutMs = 10_000, readTimeoutMs = 20_000)
     private val retry = RetryPolicy()
@@ -64,7 +64,7 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
             scope.launch(Dispatchers.IO) { gate.withPermit { progress("Loading ${a.displayName} ${tf.label}"); load(book(a.id, tf)) } }
         }
         jobs.forEach { it.join() }
-        assets.flatMap { a -> Tf.entries.map { book(a.id, it) } }.forEach { b -> if (b.closed.isNotEmpty()) onClose(b) }
+        assets.flatMap { a -> Tf.entries.map { book(a.id, it) } }.forEach { b -> if (b.closed.isNotEmpty()) onClose(b, 1) }
         scope.launch(Dispatchers.IO) { socketLoop() }
         scope.launch(Dispatchers.IO) { pollLoop() }
     }
@@ -90,7 +90,7 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
         val last = b.closed.lastOrNull() ?: return load(b)
         runCatching {
             val fresh = CandleLoader(route.source(http, retry)).since(route.symbol, b.tf.engine, last.openTime)
-            if (fresh.isNotEmpty()) { b.closed = (b.closed + fresh).takeLast(historyCount.getValue(b.tf) + 200); onClose(b) }
+            if (fresh.isNotEmpty()) { b.closed = (b.closed + fresh).takeLast(historyCount.getValue(b.tf) + 200); onClose(b, fresh.size) }
         }
     }
 
@@ -108,10 +108,13 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
                     .buildAsync(URI("wss://fstream.binance.com/stream?streams=$streams"), Listener(done)).join()
                 feed.value = Feed.LIVE
                 backoff = 2_000L
-                live.forEach { catchUp(it) } // anything that closed while we were connecting
-                // Binance closes connections after 24 hours; reconnect a little before.
+                live.forEach { catchUp(it) } // anything that closed while we were offline or connecting
+                // Binance closes connections after 24 hours; reconnect a little before. After the computer sleeps,
+                // or Wi-Fi drops, the socket can die silently: 30 streams send something every second or two,
+                // so 90 seconds of silence means it is dead.
                 val until = System.currentTimeMillis() + 23 * 3_600_000L
-                while (!done.isCompleted && System.currentTimeMillis() < until) delay(1_000)
+                lastMessage = System.currentTimeMillis()
+                while (!done.isCompleted && System.currentTimeMillis() < until && System.currentTimeMillis() - lastMessage < 90_000) delay(1_000)
                 runCatching { ws.sendClose(WebSocket.NORMAL_CLOSURE, "bye") }
             } catch (e: Exception) {
                 // fall through to reconnect
@@ -135,11 +138,13 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
         override fun onError(ws: WebSocket, error: Throwable) { done.complete(Unit) }
     }
 
+    @Volatile private var lastMessage = 0L
     private val json = Json { ignoreUnknownKeys = true }
     private val symbolToId = assets.associate { it.routes.first().symbol.lowercase() to it.id }
     private val codeToTf = Tf.entries.associateBy { it.engine.binanceCode }
 
-    private fun handle(text: String) {
+    internal fun handle(text: String) {
+        lastMessage = System.currentTimeMillis()
         val k = runCatching {
             val root = json.parseToJsonElement(text).jsonObject
             val stream = root["stream"]?.jsonPrimitive?.content ?: return
@@ -157,7 +162,7 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
             val last = b.closed.lastOrNull()
             when {
                 last == null || c.openTime > last.openTime + tf.engine.millis -> { b.forming = null; catchUp(b) } // gap: refill
-                c.openTime > last.openTime -> { b.closed = (b.closed + c).takeLast(historyCount.getValue(tf) + 200); b.forming = null; onClose(b) }
+                c.openTime > last.openTime -> { b.closed = (b.closed + c).takeLast(historyCount.getValue(tf) + 200); b.forming = null; onClose(b, 1) }
             }
         } else {
             b.forming = c
@@ -171,7 +176,10 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
     private suspend fun pollLoop() {
         while (scope.isActive) {
             delay(15_000)
-            for (b in books.values.filter { it.source.isNotEmpty() && it.source != Exchange.BINANCE.name }) {
+            // Bybit-only books always; Binance books too while the WebSocket is down (some networks block sockets).
+            val socketUp = feed.value == Feed.LIVE
+            var polled = false
+            for (b in books.values.filter { it.source.isNotEmpty() && (it.source != Exchange.BINANCE.name || !socketUp) }) {
                 val route = b.asset.routes.firstOrNull { it.exchange.name == b.source } ?: continue
                 runCatching {
                     val rows = route.source(http, retry).klines(route.symbol, b.tf.engine, 3, null)
@@ -180,10 +188,12 @@ class LiveMarket(private val assets: List<Asset>, private val scope: CoroutineSc
                     catchUp(b)
                     lastUpdate.value = now
                     tick.value = tick.value + 1
+                    polled = true
                 }
             }
+            if (polled && feed.value != Feed.LIVE) feed.value = Feed.POLLING
             // Books that failed to load at all get another try.
-            books.values.filter { it.closed.isEmpty() }.forEach { b -> load(b); if (b.closed.isNotEmpty()) onClose(b) }
+            books.values.filter { it.closed.isEmpty() }.forEach { b -> load(b); if (b.closed.isNotEmpty()) onClose(b, 1) }
         }
     }
 }

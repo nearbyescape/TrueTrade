@@ -427,6 +427,9 @@ class BreakRetestEngine(val cfg: BreakRetestConfig = BreakRetestConfig()) {
                             "${formatPrice(real(hit.at(t)))}. Wait for a retest")
                 }
             }
+            // A chart line that price has closed through is finished, even when another line took the break,
+            // so it isn't drawn as if still in force.
+            own.watching?.let { w -> if (c > w.at(t)) own.watching = null }
             return signal
         }
 

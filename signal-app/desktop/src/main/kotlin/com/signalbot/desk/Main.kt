@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.isTraySupported
 import androidx.compose.ui.window.rememberTrayState
@@ -49,15 +50,35 @@ fun main() = application {
     val scope = rememberCoroutineScope()
     val state = remember { DeskState(scope).also { it.start() } }
     val tray = rememberTrayState()
+    var visible by remember { mutableStateOf(true) }
+    var toldAboutTray by remember { mutableStateOf(false) }
     state.notify = { title, text -> tray.sendNotification(Notification(title, text, Notification.Type.Info)) }
     if (isTraySupported) {
-        Tray(icon = painterResource("icon.png"), state = tray, tooltip = "TrueTrade Desk", menu = { Item("Quit TrueTrade Desk", onClick = ::exitApplication) })
+        Tray(
+            icon = painterResource("icon.png"), state = tray, tooltip = "TrueTrade Desk",
+            onAction = { visible = true },
+            menu = {
+                Item("Open TrueTrade Desk", onClick = { visible = true })
+                Item("Quit TrueTrade Desk", onClick = ::exitApplication)
+            },
+        )
     }
     Window(
-        onCloseRequest = ::exitApplication,
+        // Closing the window keeps the app (and its alerts) running in the tray; quit from the tray icon.
+        onCloseRequest = {
+            if (isTraySupported) {
+                visible = false
+                if (!toldAboutTray) {
+                    toldAboutTray = true
+                    state.notify("TrueTrade Desk is still running", "Alerts keep coming. Open or quit it from the tray icon.")
+                }
+            } else exitApplication()
+        },
+        visible = visible,
         title = "TrueTrade Desk",
         icon = painterResource("icon.png"),
-        state = rememberWindowState(size = DpSize(1500.dp, 920.dp)),
+        // Opens maximised: fits any screen, from a 1366x768 laptop up.
+        state = rememberWindowState(placement = WindowPlacement.Maximized, size = DpSize(1400.dp, 860.dp)),
     ) {
         DeskTheme { DeskApp(state) }
     }

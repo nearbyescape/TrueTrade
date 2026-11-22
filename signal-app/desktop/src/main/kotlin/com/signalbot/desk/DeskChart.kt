@@ -51,7 +51,9 @@ fun DeskChart(view: DeskView, forming: Candle?, modifier: Modifier = Modifier, c
     val hasForming = forming != null && (view.time.isEmpty() || forming.openTime > view.time.last())
     val n = view.size + if (hasForming) 1 else 0
     var visible by remember(key) { mutableFloatStateOf(if (compact) 70f else 130f) }
-    var right by remember(key) { mutableFloatStateOf(n - 1 + if (compact) 4f else 8f) }
+    // Kept as distance from the newest candle, so new candles scroll into view on their own.
+    var fromEnd by remember(key) { mutableFloatStateOf(if (compact) -4f else -8f) }
+    val right = n - 1 - fromEnd
     var hover by remember(key) { mutableStateOf<Offset?>(null) }
     val tm = rememberTextMeasurer()
     val axis = T.Tiny.copy(color = Desk.Faint)
@@ -69,7 +71,8 @@ fun DeskChart(view: DeskView, forming: Candle?, modifier: Modifier = Modifier, c
                 detectDragGestures { change, drag ->
                     val axisW = 74.dp.toPx()
                     val cw = (size.width - axisW) / visible
-                    right = (right - drag.x / cw).coerceIn(visible * 0.3f, n - 1 + 30f)
+                    val r = (n - 1 - fromEnd - drag.x / cw).coerceIn(visible * 0.3f, n - 1 + 30f)
+                    fromEnd = n - 1 - r
                     hover = change.position
                 }
             },
@@ -189,11 +192,11 @@ private fun DrawScope.draw(
     }
 
     // Axis tags: live trade stop and target, then the live price.
-    fun tag(price: Double, col: Color, text: String = formatPrice(price)) {
+    fun tag(price: Double, col: Color, text: String = formatPrice(price), ink: Color = Desk.Base) {
         if (compact) return
         val ty = y(price)
         if (ty !in topH..plotH) return
-        val r = tm.measure(text, T.Tiny.copy(color = Desk.Base))
+        val r = tm.measure(text, T.Tiny.copy(color = ink))
         drawRect(col, Offset(plotW + 2.dp.toPx(), ty - r.size.height / 2f - 3.dp.toPx()), Size(axisW - 2.dp.toPx(), r.size.height + 6.dp.toPx()))
         drawText(r, topLeft = Offset(plotW + 8.dp.toPx(), ty - r.size.height / 2f))
     }
@@ -211,7 +214,7 @@ private fun DrawScope.draw(
         drawLine(Desk.Paper.copy(alpha = 0.25f), Offset(xc, topH), Offset(xc, plotH), 1f)
         drawLine(Desk.Paper.copy(alpha = 0.25f), Offset(0f, hv.y), Offset(plotW, hv.y), 1f)
         val p = maxP - (hv.y - topH) / (plotH - topH) * (maxP - minP)
-        tag(p, Desk.Raised, formatPrice(p))
+        tag(p, Desk.Raised, formatPrice(p), ink = Desk.Paper)
         val up = c(i) >= o(i)
         val text = "${stamp(time(i), v.tf, zone, long = true)}   O ${formatPrice(o(i))}  H ${formatPrice(h(i))}  L ${formatPrice(l(i))}  C ${formatPrice(c(i))}"
         drawText(tm.measure(text, T.Small.copy(color = if (up) Desk.Long else Desk.Short)), topLeft = Offset(6.dp.toPx(), 2.dp.toPx()))

@@ -34,7 +34,8 @@ class DeskState(private val scope: CoroutineScope) {
     var notify: (title: String, text: String) -> Unit = { _, _ -> }
 
     fun start() {
-        market.onClose = { b -> recompute(b.asset.id, b.tf) }
+        // Off the socket's thread: several charts can close at the same moment (e.g. 00:00 UTC closes all five).
+        market.onClose = { b, n -> scope.launch(Dispatchers.Default) { recompute(b.asset.id, b.tf, newCandles = n) } }
         scope.launch(Dispatchers.IO) {
             market.start { msg -> loading = msg }
             loading = null
@@ -51,12 +52,13 @@ class DeskState(private val scope: CoroutineScope) {
 
     /** Re-runs her rules for one asset and timeframe after a candle closed, and alerts anything new. */
     @Synchronized
-    fun recompute(id: String, tf: Tf, alert: Boolean = true) {
+    fun recompute(id: String, tf: Tf, alert: Boolean = true, newCandles: Int = 1) {
         val asset = assets.first { it.id == id }
         val book = market.book(id, tf)
         if (book.closed.size < 120) return
         val higher = Tf.entries.filter { it.engine.millis > tf.engine.millis }.associateWith { market.book(id, it).closed }
-        val v = runCatching { DeskAnalysis.build(asset, tf, book.closed, higher, market.book(id, Tf.D1).closed, settings) }.getOrNull() ?: return
+        val v = runCatching { DeskAnalysis.build(asset, tf, book.closed, higher, market.book(id, Tf.D1).closed, settings,
+            actionCandles = newCandles.coerceIn(1, 3)) }.getOrNull() ?: return
         viewMap[id to tf] = v
         views.value = HashMap(viewMap)
         if (alert) alertNew(v)

@@ -28,13 +28,15 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew --no-daemon --stacktrace :desktop:renderScreens 2>&1 | tee "$GITHUB_WORKSPACE/desktop.log"
+          ./gradlew --no-daemon --stacktrace --continue :engine:test :desktop:test :desktop:renderScreens 2>&1 | tee "$GITHUB_WORKSPACE/desktop.log"
       - name: Publish
         if: always()
         run: |
           mkdir -p /tmp/out/screens
           cp desktop.log /tmp/out/ 2>/dev/null || true
           cp signal-app/desktop/build/screens/*.png /tmp/out/screens/ 2>/dev/null || true
+          cp -r signal-app/desktop/build/test-results /tmp/out/desktop-test-results 2>/dev/null || true
+          cp -r signal-app/engine/build/test-results /tmp/out/engine-test-results 2>/dev/null || true
           git config user.name "build-bot"
           git config user.email "build-bot@users.noreply.github.com"
           git checkout --orphan desktop-logs

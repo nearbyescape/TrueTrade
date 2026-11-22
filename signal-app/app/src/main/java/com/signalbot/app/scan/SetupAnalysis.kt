@@ -58,7 +58,11 @@ object SetupAnalysis {
             addAll(listOf(BrAction.ENTRY, BrAction.STOP_MOVED, BrAction.EXIT_STOP, BrAction.EXIT_TARGET))
             if (stepActions) addAll(listOf(BrAction.BREAK, BrAction.RETEST))
         }
-        val actions = r.events.filter { it.index >= last - 1 && it.action in wanted }.map { e ->
+        // Stop moves and exits from the newest two candles (a late check still reports them); an entry only from the
+        // newest, because "at the next open" would be wrong for an older one.
+        val actions = r.events.filter { e ->
+            e.action in wanted && (e.index == last || (e.index == last - 1 && e.action != BrAction.ENTRY && e.action != BrAction.BREAK && e.action != BrAction.RETEST))
+        }.map { e ->
             val action = when (e.action) {
                 BrAction.ENTRY -> "ENTER"
                 BrAction.STOP_MOVED -> "MOVE_STOP"

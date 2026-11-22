@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -183,7 +184,9 @@ fun FocusChart(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, tick: L
     val a = state.assets.first { it.id == state.selected }
     val v = views[a.id to state.tf]
     val book = state.market.book(a.id, state.tf)
-    Column(Modifier.fillMaxSize().padding(start = 18.dp, end = 10.dp, top = 14.dp, bottom = 8.dp)) {
+    BoxWithConstraints(Modifier.fillMaxSize().padding(start = 18.dp, end = 10.dp, top = 14.dp, bottom = 8.dp)) {
+    val narrow = maxWidth < 900.dp
+    Column(Modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column {
                 Text(a.displayName, style = T.Title, color = Desk.Paper)
@@ -195,13 +198,9 @@ fun FocusChart(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, tick: L
             Spacer(Modifier.width(10.dp))
             changePct(state, a.id)?.let { Text(String.format(Locale.US, "%+.2f%%", it), style = T.Price, color = if (it >= 0) Desk.Long else Desk.Short) }
             Spacer(Modifier.weight(1f))
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Tf.entries.forEach { t -> Chip(t.label, t == state.tf) { state.tf = t } }
-                Spacer(Modifier.width(10.dp))
-                Chip("One chart", !state.grid) { state.grid = false }
-                Chip("All six", state.grid) { state.grid = true }
-            }
+            if (!narrow) ViewChips(state)
         }
+        if (narrow) Row(Modifier.padding(top = 8.dp)) { ViewChips(state) }
         Row(Modifier.padding(top = 6.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(v?.headline ?: book.error?.let { "Couldn't load: $it" } ?: "Loading candles...", style = T.Body,
                 color = if (v?.actions?.any { it.action == "ENTER" } == true) Desk.Saffron else Desk.Paper, modifier = Modifier.weight(1f))
@@ -210,7 +209,18 @@ fun FocusChart(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, tick: L
         Box(Modifier.weight(1f).fillMaxWidth()) {
             if (v != null) DeskChart(v, book.forming, Modifier.fillMaxSize(), zone = zone)
         }
-        Legend()
+        if (!narrow) Legend()
+    }
+    }
+}
+
+@Composable
+private fun ViewChips(state: DeskState) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Tf.entries.forEach { t -> Chip(t.label, t == state.tf) { state.tf = t } }
+        Spacer(Modifier.width(10.dp))
+        Chip("One chart", !state.grid) { state.grid = false }
+        Chip("All six", state.grid) { state.grid = true }
     }
 }
 
@@ -247,19 +257,17 @@ fun closesIn(tf: Tf, @Suppress("UNUSED_PARAMETER") tick: Long, now: Long = Syste
 
 @Composable
 fun GridCharts(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, tick: Long, zone: ZoneId) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    val narrow = maxWidth < 960.dp
     Column(Modifier.fillMaxSize().padding(start = 14.dp, end = 10.dp, top = 14.dp, bottom = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("All six on ${state.tf.label}", style = T.Title, color = Desk.Paper)
             Spacer(Modifier.width(14.dp))
             Text(closesIn(state.tf, tick), style = T.Small, color = Desk.Dim)
             Spacer(Modifier.weight(1f))
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Tf.entries.forEach { t -> Chip(t.label, t == state.tf) { state.tf = t } }
-                Spacer(Modifier.width(10.dp))
-                Chip("One chart", !state.grid) { state.grid = false }
-                Chip("All six", state.grid) { state.grid = true }
-            }
+            if (!narrow) ViewChips(state)
         }
+        if (narrow) Row(Modifier.padding(top = 8.dp)) { ViewChips(state) }
         Spacer(Modifier.height(10.dp))
         for (row in state.assets.chunked(3)) {
             Row(Modifier.weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -285,6 +293,7 @@ fun GridCharts(state: DeskState, views: Map<Pair<String, Tf>, DeskView>, tick: L
             }
         }
     }
+}
 }
 
 // ===================================================================================== right panel

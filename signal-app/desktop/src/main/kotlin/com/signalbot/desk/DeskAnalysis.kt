@@ -85,6 +85,8 @@ object DeskAnalysis {
         daily: List<Candle>?,
         s: DeskSettings,
         keep: Int = 700,
+        /** Report actions from this many newest candles: more than 1 when candles arrived together after a reconnect. */
+        actionCandles: Int = 1,
     ): DeskView {
         val symbol = asset.routes.first().symbol
         val series = Series(closed)
@@ -101,6 +103,7 @@ object DeskAnalysis {
         fun sizing(entry: Double, stop: Double): Pair<String, Double> {
             val z = PositionSizer.size(s.capital, s.riskPct / 100, entry, stop, s.leverage)
             return "Size ${qty(z.quantity)} units (${money(z.notional)}), margin ${money(z.margin)}, risk ${money(z.riskAmount)}" +
+                (if (z.cappedByCapital) ". Capped by capital x leverage, so the risk is less than ${s.riskPct}%" else "") +
                 (if (z.liquidationSafe) "" else ". Liquidation too close: use at most ${PositionSizer.maxSafeLeverage(entry, stop)}x") to z.quantity
         }
 
@@ -108,7 +111,7 @@ object DeskAnalysis {
             addAll(listOf(BrAction.ENTRY, BrAction.STOP_MOVED, BrAction.EXIT_STOP, BrAction.EXIT_TARGET))
             if (s.stepAlerts) addAll(listOf(BrAction.BREAK, BrAction.RETEST))
         }
-        val actions = r.events.filter { it.index == last && it.action in wanted }.map { e ->
+        val actions = r.events.filter { it.index > last - actionCandles && it.action in wanted }.map { e ->
             val size = if (e.action == BrAction.ENTRY && e.stop != null) sizing(e.price, e.stop!!) else null
             DeskAction(asset.id, asset.displayName, symbol, tf,
                 when (e.action) { BrAction.ENTRY -> "ENTER"; BrAction.STOP_MOVED -> "MOVE_STOP"; BrAction.EXIT_STOP, BrAction.EXIT_TARGET -> "EXIT"; else -> e.action.name },

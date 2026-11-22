@@ -37,8 +37,8 @@ fun main() {
     state.loading = null
     for (a in state.assets) for (tf in Tf.entries) state.recompute(a.id, tf, alert = false)
 
-    fun shot(name: String) {
-        val scene = ImageComposeScene(1500 * 5 / 4, 920 * 5 / 4, Density(1.25f)) { DeskTheme { DeskApp(state, ZoneId.of("Asia/Kolkata")) } }
+    fun shot(name: String, w: Int = 1500, h: Int = 920) {
+        val scene = ImageComposeScene(w * 5 / 4, h * 5 / 4, Density(1.25f)) { DeskTheme { DeskApp(state, ZoneId.of("Asia/Kolkata")) } }
         scene.render(0); scene.render(16_000_000)
         val img = scene.render(33_000_000)
         File(out, "$name.png").writeBytes(img.encodeToData(EncodedImageFormat.PNG)!!.bytes)
@@ -58,6 +58,10 @@ fun main() {
     shot("4_focus_xrp_5m")
     state.showSettings = true
     shot("5_settings")
+    state.showSettings = false; state.selected = "BTC"; state.tf = Tf.H4
+    shot("6_small_laptop_1280x720", 1280, 720)
+    state.grid = true
+    shot("7_small_laptop_grid", 1280, 720)
     kotlin.system.exitProcess(0)
 }
 
