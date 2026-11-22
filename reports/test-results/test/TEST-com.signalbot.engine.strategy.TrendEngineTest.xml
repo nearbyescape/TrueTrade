@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.strategy.TrendEngineTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:50.843Z" hostname="runnervm0hi8g" time="0.247">
+  <properties/>
+  <testcase name="neverLooksIntoTheFuture()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.143"/>
+  <testcase name="shortsMirrorLongs()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.01"/>
+  <testcase name="oneSignalOnTheBreakoutDayClose()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.006"/>
+  <testcase name="onlyDailyClosesAreJudged()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.009"/>
+  <testcase name="backtestsWithTrailExits()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.054"/>
+  <testcase name="noLongsBelowThe200DayEma()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.005"/>
+  <testcase name="aSteadyTrendGivesNoLateEntries()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.006"/>
+  <testcase name="goldSkipsBreakoutsOnFridaysClose()" classname="com.signalbot.engine.strategy.TrendEngineTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

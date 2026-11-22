@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.backtest.BacktesterTest" tests="23" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:40.306Z" hostname="runnervm0hi8g" time="0.312">
+  <properties/>
+  <testcase name="fundingRepeatsLastKnownRateWhenArchiveEnds()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.15"/>
+  <testcase name="gapThroughStopFillsAtTheOpen()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="runnerTrailsToBigWin()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.001"/>
+  <testcase name="trailModeRidesTheWholePositionAndOnlyRaisesTheStop()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.01"/>
+  <testcase name="feesAndSlippageInR()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.005"/>
+  <testcase name="fullLossAtStop()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.008"/>
+  <testcase name="stopAndTargetInOneCandleCountsAsStop()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.0"/>
+  <testcase name="timeStopAfter48Hours()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="tp1ThenBreakeven()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.002"/>
+  <testcase name="shortsMirrorLongs()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.003"/>
+  <testcase name="statsFromKnownTrades()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.045"/>
+  <testcase name="takeProfitsPayMakerFee()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.008"/>
+  <testcase name="tp2ThenProfitStop()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.003"/>
+  <testcase name="minScoreFiltersWeakSignals()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="sameCandleTp1AndBreakevenAssumesTheWorse()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.001"/>
+  <testcase name="skipsWhenPriceAlreadyRanAway()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="runnerCanExitAtTargetInstead()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.002"/>
+  <testcase name="portfolioLimitsPerGroupAndTotal()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.001"/>
+  <testcase name="dailyLossLimitPausesNewTrades()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.003"/>
+  <testcase name="trailModeLossAndNoTimeStop()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="fundingLongsPayShortsReceive()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.004"/>
+  <testcase name="weekStartIsMondayUtc()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.0"/>
+  <testcase name="cooldownSkipsRepeatSignals()" classname="com.signalbot.engine.backtest.BacktesterTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

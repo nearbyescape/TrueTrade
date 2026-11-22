@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.strategy.EnsembleEngineTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:42.468Z" hostname="runnervm0hi8g" time="0.257">
+  <properties/>
+  <testcase name="neverLooksIntoTheFuture()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.157"/>
+  <testcase name="handWorkedLeg()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.002"/>
+  <testcase name="trendFilterBlocksLongsBelowTheEma()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.003"/>
+  <testcase name="tinyStopsAreSkipped()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.001"/>
+  <testcase name="backtestFillsAtNextOpenWithCosts()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.009"/>
+  <testcase name="legsAlternateEnterExitAndAreIndependent()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.072"/>
+  <testcase name="shortsCanBeTurnedOff()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.001"/>
+  <testcase name="fundingLongsPayShortsReceive()" classname="com.signalbot.engine.strategy.EnsembleEngineTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

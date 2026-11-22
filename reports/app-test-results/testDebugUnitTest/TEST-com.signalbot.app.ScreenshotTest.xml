@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.app.ScreenshotTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:11:22.175Z" hostname="runnervm0hi8g" time="14.82">
+  <properties/>
+  <testcase name="setupSettings" classname="com.signalbot.app.ScreenshotTest" time="10.663"/>
+  <testcase name="orderDetails" classname="com.signalbot.app.ScreenshotTest" time="0.528"/>
+  <testcase name="setupRecord" classname="com.signalbot.app.ScreenshotTest" time="0.519"/>
+  <testcase name="journal" classname="com.signalbot.app.ScreenshotTest" time="0.432"/>
+  <testcase name="positionExpanded" classname="com.signalbot.app.ScreenshotTest" time="0.38"/>
+  <testcase name="record" classname="com.signalbot.app.ScreenshotTest" time="0.347"/>
+  <testcase name="chart" classname="com.signalbot.app.ScreenshotTest" time="0.514"/>
+  <testcase name="today" classname="com.signalbot.app.ScreenshotTest" time="0.477"/>
+  <testcase name="setupToday" classname="com.signalbot.app.ScreenshotTest" time="0.313"/>
+  <testcase name="settings" classname="com.signalbot.app.ScreenshotTest" time="0.356"/>
+  <testcase name="todayQuiet" classname="com.signalbot.app.ScreenshotTest" time="0.29"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

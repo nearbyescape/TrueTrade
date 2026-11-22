@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.data.CandleLoaderTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:40.630Z" hostname="runnervm0hi8g" time="0.056">
+  <properties/>
+  <testcase name="stopsAtTheCoinsFirstCandle()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.019"/>
+  <testcase name="timeframeFloorAlignsToUtc()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.009"/>
+  <testcase name="findsGaps()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.002"/>
+  <testcase name="dropsTheCandleStillForming()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.003"/>
+  <testcase name="pagesBackThroughHistory()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.011"/>
+  <testcase name="catchesUpAfterBeingOffline()" classname="com.signalbot.engine.data.CandleLoaderTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

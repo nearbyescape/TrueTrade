@@ -1,0 +1,330 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :engine:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :engine:processResources NO-SOURCE
+> Task :engine:processTestResources
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:processDebugManifestForPackage
+> Task :app:desugarDebugFileDependencies
+> Task :app:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:checkDebugDuplicateClasses
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
+> Task :engine:compileKotlin
+> Task :engine:compileJava NO-SOURCE
+> Task :engine:classes UP-TO-DATE
+> Task :engine:jar
+> Task :app:mergeDebugNativeLibs
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
+
+> Task :app:mergeLibDexDebug
+> Task :engine:compileTestKotlin
+> Task :engine:compileTestJava NO-SOURCE
+> Task :engine:testClasses
+
+> Task :engine:test
+
+BacktesterTest > fundingRepeatsLastKnownRateWhenArchiveEnds() PASSED
+
+BacktesterTest > gapThroughStopFillsAtTheOpen() PASSED
+
+BacktesterTest > runnerTrailsToBigWin() PASSED
+
+BacktesterTest > trailModeRidesTheWholePositionAndOnlyRaisesTheStop() PASSED
+
+BacktesterTest > feesAndSlippageInR() PASSED
+
+BacktesterTest > fullLossAtStop() PASSED
+
+BacktesterTest > stopAndTargetInOneCandleCountsAsStop() PASSED
+
+BacktesterTest > timeStopAfter48Hours() PASSED
+
+BacktesterTest > tp1ThenBreakeven() PASSED
+
+BacktesterTest > shortsMirrorLongs() PASSED
+
+BacktesterTest > statsFromKnownTrades() PASSED
+
+BacktesterTest > takeProfitsPayMakerFee() PASSED
+
+BacktesterTest > tp2ThenProfitStop() PASSED
+
+BacktesterTest > minScoreFiltersWeakSignals() PASSED
+
+BacktesterTest > sameCandleTp1AndBreakevenAssumesTheWorse() PASSED
+
+BacktesterTest > skipsWhenPriceAlreadyRanAway() PASSED
+
+BacktesterTest > runnerCanExitAtTargetInstead() PASSED
+
+BacktesterTest > portfolioLimitsPerGroupAndTotal() PASSED
+
+BacktesterTest > dailyLossLimitPausesNewTrades() PASSED
+
+BacktesterTest > trailModeLossAndNoTimeStop() PASSED
+
+BacktesterTest > fundingLongsPayShortsReceive() PASSED
+
+BacktesterTest > weekStartIsMondayUtc() PASSED
+
+BacktesterTest > cooldownSkipsRepeatSignals() PASSED
+
+CandleLoaderTest > stopsAtTheCoinsFirstCandle() PASSED
+
+CandleLoaderTest > timeframeFloorAlignsToUtc() PASSED
+
+CandleLoaderTest > findsGaps() PASSED
+
+CandleLoaderTest > dropsTheCandleStillForming() PASSED
+
+CandleLoaderTest > pagesBackThroughHistory() PASSED
+
+CandleLoaderTest > catchesUpAfterBeingOffline() PASSED
+
+ExchangeSourcesTest > binanceParsesAndBuildsUrl() PASSED
+
+ExchangeSourcesTest > reportsEveryFailureWhenAllSourcesFail() PASSED
+
+ExchangeSourcesTest > networkFailureIsRetried() PASSED
+
+ExchangeSourcesTest > doesNotRetryClientErrors() PASSED
+
+ExchangeSourcesTest > bybitIsReversedToOldestFirstWithCloseTime() PASSED
+
+ExchangeSourcesTest > fallsBackToBybitWhenBinanceBansUs() PASSED
+
+ExchangeSourcesTest > retriesServerErrorsWithBackoff() PASSED
+
+ExchangeSourcesTest > rejectsUnsafeSymbols() PASSED
+
+ExchangeSourcesTest > bybitRetCodeErrors() PASSED
+
+ExchangeSourcesTest > honoursRetryAfterOnRateLimit() PASSED
+
+ExchangeSourcesTest > givesUpAfterMaxAttempts() PASSED
+
+ExchangeSourcesTest > bothSourcesAgreeOnTheSameCandles() PASSED
+
+ExchangeSourcesTest > garbageBodyIsARetryableError() PASSED
+
+BinanceArchiveTest > usesMonthlyFilesThenDailyForTheCurrentMonthAndCaches() PASSED
+
+BinanceArchiveTest > parsesFunding() PASSED
+
+BinanceArchiveTest > parsesFilesWithAndWithoutHeaderAndMicroseconds() PASSED
+
+IndicatorsTest > lastValidIndexSkipsTrailingNaN() PASSED
+
+IndicatorsTest > rsiHandWorked() PASSED
+
+IndicatorsTest > atrOfLengthOneIsTrueRange() PASSED
+
+IndicatorsTest > macdHistogramIsLineMinusSignal() PASSED
+
+IndicatorsTest > smaStaysExactOnLongSeries() PASSED
+
+IndicatorsTest > smaIsNaNWhileAWindowHoldsNaN() PASSED
+
+IndicatorsTest > highestLowestAndMedian() PASSED
+
+IndicatorsTest > adxReachesHundredInAPerfectUptrend() PASSED
+
+IndicatorsTest > rsiIsHundredWithNoLossesAndZeroWithNoGains() PASSED
+
+IndicatorsTest > bollingerWidth() PASSED
+
+IndicatorsTest > fixnanCarriesLastValue() PASSED
+
+IndicatorsTest > smaWaitsForAFullWindow() PASSED
+
+IndicatorsTest > rmaUsesWildersAlpha() PASSED
+
+IndicatorsTest > obvAddsOnUpClosesAndSubtractsOnDown() PASSED
+
+IndicatorsTest > stdevIsPopulationStdev() PASSED
+
+IndicatorsTest > trueRangeCoversGapsAndFirstBar() PASSED
+
+IndicatorsTest > emaIsSeededWithSmaThenRecursive() PASSED
+
+SwingsTest > equalHighsOnTheRightDoNotCreateTwoSwings() PASSED
+
+SwingsTest > noLookAhead() PASSED
+
+SwingsTest > findsSwingLows() PASSED
+
+SwingsTest > findsSwingHighWithConfirmationBar() PASSED
+
+TaLibReferenceTest > bollinger() PASSED
+
+TaLibReferenceTest > atr() PASSED
+
+TaLibReferenceTest > ema() PASSED
+
+TaLibReferenceTest > rsi() PASSED
+
+TaLibReferenceTest > sma() PASSED
+
+TaLibReferenceTest > macd() PASSED
+
+TaLibReferenceTest > obvStepsMatch() PASSED
+
+TaLibReferenceTest > dmiAndAdx() PASSED
+
+BreakRetestTest > break, retest and close give a long signal at the retest candle() PASSED
+
+BreakRetestTest > no retest within the window means no trade() PASSED
+
+BreakRetestTest > a close back through the broken line cancels the setup() PASSED
+
+BreakRetestTest > target mode exits at the nearest resistance() PASSED
+
+BreakRetestTest > decisions never use later candles() PASSED
+
+BreakRetestTest > her stop follows the opposing line and is tighter than the flat swing stop() PASSED
+
+BreakRetestTest > top-down lines never use higher candles that have not closed() PASSED
+
+BreakRetestTest > stop is hit when price falls back() PASSED
+
+BreakRetestTest > the mirror image gives the same short() PASSED
+
+EnsembleEngineTest > neverLooksIntoTheFuture() PASSED
+
+EnsembleEngineTest > handWorkedLeg() PASSED
+
+EnsembleEngineTest > trendFilterBlocksLongsBelowTheEma() PASSED
+
+EnsembleEngineTest > tinyStopsAreSkipped() PASSED
+
+EnsembleEngineTest > backtestFillsAtNextOpenWithCosts() PASSED
+
+EnsembleEngineTest > legsAlternateEnterExitAndAreIndependent() PASSED
+
+EnsembleEngineTest > shortsCanBeTurnedOff() PASSED
+
+EnsembleEngineTest > fundingLongsPayShortsReceive() PASSED
+
+SignalEngineTest > findsSignalsInUptrendsAndNoShortsThere() PASSED
+
+SignalEngineTest > rejectionsExplainThemselves() PASSED
+
+SignalEngineTest > tooLittleHistoryIsReportedNotGuessed() PASSED
+
+> Task :app:compileDebugKotlin
+
+> Task :engine:test
+
+SignalEngineTest > neverLooksIntoTheFuture() PASSED
+
+SignalEngineTest > shortsAreOnByDefaultForFutures() PASSED
+
+SignalEngineTest > shortPlanPricesAreOnTheRightSide() PASSED
+
+SignalEngineTest > everyGateCanFire() PASSED
+
+SignalEngineTest > missingBtcDataDoesNotBlockButCostsContextPoints() PASSED
+
+SignalEngineTest > evaluateLatestJudgesTheNewestBar() PASSED
+
+SignalEngineTest > shortsAreExactMirrorsOfLongs() PASSED
+
+SignalEngineTest > findsShortsInDowntrendsOnlyWhenAllowed() PASSED
+
+SignalEngineTest > metalsSkipTheWeekend() PASSED
+
+SignalEngineTest > btcDowntrendBlocksAltcoinLongs() PASSED
+
+SignalEngineTest > everySignalRespectsTheHardGatesAndPlan() PASSED
+
+StrategyPartsTest > cooldownHoldsRepeatsButLetsUpgradesThrough() PASSED
+
+StrategyPartsTest > positionSizeCapsAtCapitalTimesLeverageAndRoundsToStep() PASSED
+
+StrategyPartsTest > flagsLeverageThatWouldLiquidateBeforeTheStop() PASSED
+
+StrategyPartsTest > loadsGoldFromBinanceFutures() PASSED
+
+StrategyPartsTest > resampleAlignsToUtcEvenWhenStartingMidPeriod() PASSED
+
+StrategyPartsTest > resamplesHourlyInto4h() PASSED
+
+StrategyPartsTest > metalsWeekendWindow() PASSED
+
+StrategyPartsTest > neverMixesExchangesWithinOneLoad() PASSED
+
+StrategyPartsTest > positionSizeIncludesFees() PASSED
+
+StrategyPartsTest > mirroringFlipsPricesAndKeepsVolume() PASSED
+
+StrategyPartsTest > leverageChangesMarginNotRisk() PASSED
+
+StrategyPartsTest > defaultWatchList() PASSED
+
+StrategyPartsTest > closedIndexOnlyCountsFinishedCandles() PASSED
+
+StrategyPartsTest > reportsWhenEveryRouteFails() PASSED
+
+TrendEngineTest > neverLooksIntoTheFuture() PASSED
+
+TrendEngineTest > shortsMirrorLongs() PASSED
+
+TrendEngineTest > oneSignalOnTheBreakoutDayClose() PASSED
+
+TrendEngineTest > onlyDailyClosesAreJudged() PASSED
+
+TrendEngineTest > backtestsWithTrailExits() PASSED
+
+TrendEngineTest > noLongsBelowThe200DayEma() PASSED
+
+TrendEngineTest > aSteadyTrendGivesNoLateEntries() PASSED
+
+TrendEngineTest > goldSkipsBreakoutsOnFridaysClose() PASSED
+
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795327791294.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 10s
+40 actionable tasks: 40 executed

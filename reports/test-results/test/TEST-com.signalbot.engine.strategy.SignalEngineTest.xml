@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.strategy.SignalEngineTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:42.839Z" hostname="runnervm0hi8g" time="7.95">
+  <properties/>
+  <testcase name="findsSignalsInUptrendsAndNoShortsThere()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.949"/>
+  <testcase name="rejectionsExplainThemselves()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.242"/>
+  <testcase name="tooLittleHistoryIsReportedNotGuessed()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.003"/>
+  <testcase name="neverLooksIntoTheFuture()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="5.367"/>
+  <testcase name="shortsAreOnByDefaultForFutures()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.0"/>
+  <testcase name="shortPlanPricesAreOnTheRightSide()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.029"/>
+  <testcase name="everyGateCanFire()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.481"/>
+  <testcase name="missingBtcDataDoesNotBlockButCostsContextPoints()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.064"/>
+  <testcase name="evaluateLatestJudgesTheNewestBar()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.016"/>
+  <testcase name="shortsAreExactMirrorsOfLongs()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.1"/>
+  <testcase name="findsShortsInDowntrendsOnlyWhenAllowed()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.095"/>
+  <testcase name="metalsSkipTheWeekend()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.078"/>
+  <testcase name="btcDowntrendBlocksAltcoinLongs()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.128"/>
+  <testcase name="everySignalRespectsTheHardGatesAndPlan()" classname="com.signalbot.engine.strategy.SignalEngineTest" time="0.132"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
