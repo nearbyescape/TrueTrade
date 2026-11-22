@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
     val from = YearMonth.parse(args.getOrNull(0) ?: "2023-01")
     val to = args.getOrNull(1)?.let(LocalDate::parse) ?: LocalDate.now(ZoneOffset.UTC).minusDays(1)
     val out = File(args.getOrNull(2) ?: "backtest-out").apply { mkdirs() }
-    val only = args.getOrNull(3)
+    val only = args.getOrNull(3)?.split(',')?.toSet()
     val archive = BinanceArchive(File(out, "cache"), log = { print(".") })
     val assets = Assets.DESKTOP
     val sb = StringBuilder()
@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
     val hourly = assets.associate { it.id to archive.hourly(it.routes.first().symbol, Market.PERP, from, to) }
     val funding = assets.associate { it.id to archive.funding(it.routes.first().symbol, from, to) }
     val shortFrom = YearMonth.from(to).minusMonths(11)
-    val wantShort = only == null || only == "15m" || only == "5m"
+    val wantShort = only == null || "15m" in only || "5m" in only
     print("\nLoading 15m and 5m history")
     val m15 = if (wantShort) assets.associate { it.id to archive.klines(it.routes.first().symbol, Market.PERP, "15m", shortFrom, to) } else emptyMap()
     val m5 = if (wantShort) assets.associate { it.id to archive.klines(it.routes.first().symbol, Market.PERP, "5m", shortFrom, to) } else emptyMap()
@@ -70,7 +70,7 @@ fun main(args: Array<String>) {
     }
 
     for (tf in listOf(Timeframe.D1, Timeframe.H4, Timeframe.H1, Timeframe.M15, Timeframe.M5)) {
-        if (only != null && only != tf.label) continue
+        if (only != null && tf.label !in only) continue
         val short = tf == Timeframe.M5 || tf == Timeframe.M15
         val (start, unseen) = if (short) shortStart to shortUnseen else longStart to longUnseen
         say("\n================ ${tf.label} candles${if (short) " (last 12 months)" else ""}")
@@ -82,8 +82,11 @@ fun main(args: Array<String>) {
                 if (base.size < 500) return@flatMap emptyList<BrResult>()
                 val s = Series(base)
                 val higher = if (!v.topDown) emptyList() else BreakRetestPresets.higherOf(tf).map { h ->
-                    val hs = if (h.millis < Timeframe.H1.millis) Resample.to(base, h)
-                        else Resample.from1h(hourly.getValue(a.id), h).filter { it.openTime >= base.first().openTime - 400L * h.millis }
+                    val hs = when {
+                        h.millis < Timeframe.H1.millis -> Resample.to(base, h)
+                        h == Timeframe.H1 -> hourly.getValue(a.id)
+                        else -> Resample.from1h(hourly.getValue(a.id), h)
+                    }.filter { it.openTime >= base.first().openTime - 400L * h.millis }
                     Series(hs) to BreakRetestPresets.forTimeframe(h)
                 }
                 val (al, ash) = if (v.trend) DailyTrend.allow(Series(Resample.from1h(hourly.getValue(a.id), Timeframe.D1)), s) else null to null
