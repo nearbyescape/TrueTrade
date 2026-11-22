@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.strategy.BreakRetestTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:26.914Z" hostname="runnervm0hi8g" time="0.402">
+  <properties/>
+  <testcase name="break, retest and close give a long signal at the retest candle()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.029"/>
+  <testcase name="no retest within the window means no trade()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.014"/>
+  <testcase name="a close back through the broken line cancels the setup()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.005"/>
+  <testcase name="target mode exits at the nearest resistance()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.011"/>
+  <testcase name="decisions never use later candles()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.174"/>
+  <testcase name="her stop follows the opposing line and is tighter than the flat swing stop()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.004"/>
+  <testcase name="top-down lines never use higher candles that have not closed()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.147"/>
+  <testcase name="stop is hit when price falls back()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.01"/>
+  <testcase name="the mirror image gives the same short()" classname="com.signalbot.engine.strategy.BreakRetestTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,318 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :engine:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :engine:processResources NO-SOURCE
+> Task :engine:processTestResources
+> Task :desktop:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :desktop:convertXmlValueResourcesForMain NO-SOURCE
+> Task :desktop:copyNonXmlValueResourcesForMain NO-SOURCE
+> Task :desktop:prepareComposeResourcesTaskForMain NO-SOURCE
+> Task :desktop:generateResourceAccessorsForMain SKIPPED
+> Task :desktop:generateActualResourceCollectorsForMain SKIPPED
+> Task :desktop:generateComposeResClass SKIPPED
+> Task :desktop:assembleMainResources
+> Task :desktop:processResources
+> Task :desktop:convertXmlValueResourcesForTest NO-SOURCE
+> Task :desktop:copyNonXmlValueResourcesForTest NO-SOURCE
+> Task :desktop:prepareComposeResourcesTaskForTest NO-SOURCE
+> Task :desktop:generateResourceAccessorsForTest SKIPPED
+> Task :desktop:assembleTestResources
+> Task :desktop:processTestResources
+> Task :engine:compileKotlin
+> Task :engine:compileJava NO-SOURCE
+> Task :engine:classes UP-TO-DATE
+> Task :engine:jar
+> Task :engine:compileTestKotlin
+> Task :engine:compileTestJava NO-SOURCE
+> Task :engine:testClasses
+
+> Task :engine:test
+
+BacktesterTest > fundingRepeatsLastKnownRateWhenArchiveEnds() PASSED
+
+BacktesterTest > gapThroughStopFillsAtTheOpen() PASSED
+
+BacktesterTest > runnerTrailsToBigWin() PASSED
+
+BacktesterTest > trailModeRidesTheWholePositionAndOnlyRaisesTheStop() PASSED
+
+BacktesterTest > feesAndSlippageInR() PASSED
+
+BacktesterTest > fullLossAtStop() PASSED
+
+BacktesterTest > stopAndTargetInOneCandleCountsAsStop() PASSED
+
+BacktesterTest > timeStopAfter48Hours() PASSED
+
+BacktesterTest > tp1ThenBreakeven() PASSED
+
+BacktesterTest > shortsMirrorLongs() PASSED
+
+BacktesterTest > statsFromKnownTrades() PASSED
+
+BacktesterTest > takeProfitsPayMakerFee() PASSED
+
+BacktesterTest > tp2ThenProfitStop() PASSED
+
+BacktesterTest > minScoreFiltersWeakSignals() PASSED
+
+BacktesterTest > sameCandleTp1AndBreakevenAssumesTheWorse() PASSED
+
+BacktesterTest > skipsWhenPriceAlreadyRanAway() PASSED
+
+BacktesterTest > runnerCanExitAtTargetInstead() PASSED
+
+BacktesterTest > portfolioLimitsPerGroupAndTotal() PASSED
+
+BacktesterTest > dailyLossLimitPausesNewTrades() PASSED
+
+BacktesterTest > trailModeLossAndNoTimeStop() PASSED
+
+BacktesterTest > fundingLongsPayShortsReceive() PASSED
+
+BacktesterTest > weekStartIsMondayUtc() PASSED
+
+BacktesterTest > cooldownSkipsRepeatSignals() PASSED
+
+CandleLoaderTest > stopsAtTheCoinsFirstCandle() PASSED
+
+CandleLoaderTest > timeframeFloorAlignsToUtc() PASSED
+
+CandleLoaderTest > findsGaps() PASSED
+
+CandleLoaderTest > dropsTheCandleStillForming() PASSED
+
+CandleLoaderTest > pagesBackThroughHistory() PASSED
+
+CandleLoaderTest > catchesUpAfterBeingOffline() PASSED
+
+ExchangeSourcesTest > binanceParsesAndBuildsUrl() PASSED
+
+ExchangeSourcesTest > reportsEveryFailureWhenAllSourcesFail() PASSED
+
+ExchangeSourcesTest > networkFailureIsRetried() PASSED
+
+ExchangeSourcesTest > doesNotRetryClientErrors() PASSED
+
+ExchangeSourcesTest > bybitIsReversedToOldestFirstWithCloseTime() PASSED
+
+ExchangeSourcesTest > fallsBackToBybitWhenBinanceBansUs() PASSED
+
+ExchangeSourcesTest > retriesServerErrorsWithBackoff() PASSED
+
+ExchangeSourcesTest > rejectsUnsafeSymbols() PASSED
+
+ExchangeSourcesTest > bybitRetCodeErrors() PASSED
+
+ExchangeSourcesTest > honoursRetryAfterOnRateLimit() PASSED
+
+ExchangeSourcesTest > givesUpAfterMaxAttempts() PASSED
+
+ExchangeSourcesTest > bothSourcesAgreeOnTheSameCandles() PASSED
+
+ExchangeSourcesTest > garbageBodyIsARetryableError() PASSED
+
+BinanceArchiveTest > usesMonthlyFilesThenDailyForTheCurrentMonthAndCaches() PASSED
+
+BinanceArchiveTest > parsesFunding() PASSED
+
+BinanceArchiveTest > parsesFilesWithAndWithoutHeaderAndMicroseconds() PASSED
+
+IndicatorsTest > lastValidIndexSkipsTrailingNaN() PASSED
+
+IndicatorsTest > rsiHandWorked() PASSED
+
+IndicatorsTest > atrOfLengthOneIsTrueRange() PASSED
+
+IndicatorsTest > macdHistogramIsLineMinusSignal() PASSED
+
+IndicatorsTest > smaStaysExactOnLongSeries() PASSED
+
+IndicatorsTest > smaIsNaNWhileAWindowHoldsNaN() PASSED
+
+IndicatorsTest > highestLowestAndMedian() PASSED
+
+IndicatorsTest > adxReachesHundredInAPerfectUptrend() PASSED
+
+IndicatorsTest > rsiIsHundredWithNoLossesAndZeroWithNoGains() PASSED
+
+IndicatorsTest > bollingerWidth() PASSED
+
+IndicatorsTest > fixnanCarriesLastValue() PASSED
+
+IndicatorsTest > smaWaitsForAFullWindow() PASSED
+
+IndicatorsTest > rmaUsesWildersAlpha() PASSED
+
+IndicatorsTest > obvAddsOnUpClosesAndSubtractsOnDown() PASSED
+
+IndicatorsTest > stdevIsPopulationStdev() PASSED
+
+IndicatorsTest > trueRangeCoversGapsAndFirstBar() PASSED
+
+IndicatorsTest > emaIsSeededWithSmaThenRecursive() PASSED
+
+SwingsTest > equalHighsOnTheRightDoNotCreateTwoSwings() PASSED
+
+SwingsTest > noLookAhead() PASSED
+
+SwingsTest > findsSwingLows() PASSED
+
+SwingsTest > findsSwingHighWithConfirmationBar() PASSED
+
+TaLibReferenceTest > bollinger() PASSED
+
+TaLibReferenceTest > atr() PASSED
+
+TaLibReferenceTest > ema() PASSED
+
+TaLibReferenceTest > rsi() PASSED
+
+TaLibReferenceTest > sma() PASSED
+
+TaLibReferenceTest > macd() PASSED
+
+TaLibReferenceTest > obvStepsMatch() PASSED
+
+TaLibReferenceTest > dmiAndAdx() PASSED
+
+BreakRetestTest > break, retest and close give a long signal at the retest candle() PASSED
+
+BreakRetestTest > no retest within the window means no trade() PASSED
+
+BreakRetestTest > a close back through the broken line cancels the setup() PASSED
+
+BreakRetestTest > target mode exits at the nearest resistance() PASSED
+
+BreakRetestTest > decisions never use later candles() PASSED
+
+BreakRetestTest > her stop follows the opposing line and is tighter than the flat swing stop() PASSED
+
+BreakRetestTest > top-down lines never use higher candles that have not closed() PASSED
+
+BreakRetestTest > stop is hit when price falls back() PASSED
+
+BreakRetestTest > the mirror image gives the same short() PASSED
+
+EnsembleEngineTest > neverLooksIntoTheFuture() PASSED
+
+EnsembleEngineTest > handWorkedLeg() PASSED
+
+EnsembleEngineTest > trendFilterBlocksLongsBelowTheEma() PASSED
+
+EnsembleEngineTest > tinyStopsAreSkipped() PASSED
+
+EnsembleEngineTest > backtestFillsAtNextOpenWithCosts() PASSED
+
+EnsembleEngineTest > legsAlternateEnterExitAndAreIndependent() PASSED
+
+EnsembleEngineTest > shortsCanBeTurnedOff() PASSED
+
+EnsembleEngineTest > fundingLongsPayShortsReceive() PASSED
+
+> Task :desktop:compileKotlin
+w: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/desktop/src/main/kotlin/com/signalbot/desk/Main.kt:58:20 'fun painterResource(resourcePath: String): Painter' is deprecated. Migrate to the Compose resources library. See https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-images-resources.html If you need to load resources specificly from Java classpath, you should still use the new resource library and use a snippet from https://github.com/JetBrains/compose-multiplatform-core/pull/1457.
+w: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/desktop/src/main/kotlin/com/signalbot/desk/Main.kt:79:16 'fun painterResource(resourcePath: String): Painter' is deprecated. Migrate to the Compose resources library. See https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-images-resources.html If you need to load resources specificly from Java classpath, you should still use the new resource library and use a snippet from https://github.com/JetBrains/compose-multiplatform-core/pull/1457.
+
+> Task :engine:test
+
+SignalEngineTest > findsSignalsInUptrendsAndNoShortsThere() PASSED
+
+SignalEngineTest > rejectionsExplainThemselves() PASSED
+
+SignalEngineTest > tooLittleHistoryIsReportedNotGuessed() PASSED
+
+SignalEngineTest > neverLooksIntoTheFuture() PASSED
+
+SignalEngineTest > shortsAreOnByDefaultForFutures() PASSED
+
+SignalEngineTest > shortPlanPricesAreOnTheRightSide() PASSED
+
+SignalEngineTest > everyGateCanFire() PASSED
+
+SignalEngineTest > missingBtcDataDoesNotBlockButCostsContextPoints() PASSED
+
+SignalEngineTest > evaluateLatestJudgesTheNewestBar() PASSED
+
+SignalEngineTest > shortsAreExactMirrorsOfLongs() PASSED
+
+SignalEngineTest > findsShortsInDowntrendsOnlyWhenAllowed() PASSED
+
+SignalEngineTest > metalsSkipTheWeekend() PASSED
+
+SignalEngineTest > btcDowntrendBlocksAltcoinLongs() PASSED
+
+SignalEngineTest > everySignalRespectsTheHardGatesAndPlan() PASSED
+
+StrategyPartsTest > cooldownHoldsRepeatsButLetsUpgradesThrough() PASSED
+
+StrategyPartsTest > positionSizeCapsAtCapitalTimesLeverageAndRoundsToStep() PASSED
+
+StrategyPartsTest > flagsLeverageThatWouldLiquidateBeforeTheStop() PASSED
+
+StrategyPartsTest > loadsGoldFromBinanceFutures() PASSED
+
+StrategyPartsTest > resampleAlignsToUtcEvenWhenStartingMidPeriod() PASSED
+
+StrategyPartsTest > resamplesHourlyInto4h() PASSED
+
+StrategyPartsTest > metalsWeekendWindow() PASSED
+
+StrategyPartsTest > neverMixesExchangesWithinOneLoad() PASSED
+
+StrategyPartsTest > positionSizeIncludesFees() PASSED
+
+StrategyPartsTest > mirroringFlipsPricesAndKeepsVolume() PASSED
+
+StrategyPartsTest > leverageChangesMarginNotRisk() PASSED
+
+StrategyPartsTest > defaultWatchList() PASSED
+
+StrategyPartsTest > closedIndexOnlyCountsFinishedCandles() PASSED
+
+StrategyPartsTest > reportsWhenEveryRouteFails() PASSED
+
+TrendEngineTest > neverLooksIntoTheFuture() PASSED
+
+TrendEngineTest > shortsMirrorLongs() PASSED
+
+TrendEngineTest > oneSignalOnTheBreakoutDayClose() PASSED
+
+TrendEngineTest > onlyDailyClosesAreJudged() PASSED
+
+TrendEngineTest > backtestsWithTrailExits() PASSED
+
+TrendEngineTest > noLongsBelowThe200DayEma() PASSED
+
+TrendEngineTest > aSteadyTrendGivesNoLateEntries() PASSED
+
+TrendEngineTest > goldSkipsBreakoutsOnFridaysClose() PASSED
+
+> Task :desktop:compileJava NO-SOURCE
+> Task :desktop:classes
+> Task :desktop:jar
+> Task :desktop:compileTestKotlin
+> Task :desktop:compileTestJava NO-SOURCE
+> Task :desktop:testClasses
+> Task :desktop:test
+
+> Task :desktop:renderScreens
+wrote 1_focus_btc_1h
+wrote 2_focus_trade_gold_15m
+wrote 3_grid_15m
+wrote 4_focus_xrp_5m
+wrote 5_settings
+wrote 6_small_laptop_1280x720
+wrote 7_small_laptop_grid
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1795327790701.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TrueTrade/TrueTrade/signal-app/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 58s
+14 actionable tasks: 14 executed

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.desk.DeskTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:36.032Z" hostname="runnervm0hi8g" time="0.126">
+  <properties/>
+  <testcase name="plain prices have no commas and enough decimals()" classname="com.signalbot.desk.DeskTest" time="0.034"/>
+  <testcase name="gold and silver streams map to their assets()" classname="com.signalbot.desk.DeskTest" time="0.078"/>
+  <testcase name="settings round-trip keeps alert timeframes()" classname="com.signalbot.desk.DeskTest" time="0.004"/>
+  <testcase name="live candle updates the forming candle, a closed one is appended once()" classname="com.signalbot.desk.DeskTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

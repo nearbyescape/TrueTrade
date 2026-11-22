@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.strategy.StrategyPartsTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:32.996Z" hostname="runnervm0hi8g" time="0.049">
+  <properties/>
+  <testcase name="cooldownHoldsRepeatsButLetsUpgradesThrough()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.021"/>
+  <testcase name="positionSizeCapsAtCapitalTimesLeverageAndRoundsToStep()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.002"/>
+  <testcase name="flagsLeverageThatWouldLiquidateBeforeTheStop()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <testcase name="loadsGoldFromBinanceFutures()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.01"/>
+  <testcase name="resampleAlignsToUtcEvenWhenStartingMidPeriod()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.0"/>
+  <testcase name="resamplesHourlyInto4h()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.0"/>
+  <testcase name="metalsWeekendWindow()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <testcase name="neverMixesExchangesWithinOneLoad()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.007"/>
+  <testcase name="positionSizeIncludesFees()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <testcase name="mirroringFlipsPricesAndKeepsVolume()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.0"/>
+  <testcase name="leverageChangesMarginNotRisk()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.0"/>
+  <testcase name="defaultWatchList()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <testcase name="closedIndexOnlyCountsFinishedCandles()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <testcase name="reportsWhenEveryRouteFails()" classname="com.signalbot.engine.strategy.StrategyPartsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

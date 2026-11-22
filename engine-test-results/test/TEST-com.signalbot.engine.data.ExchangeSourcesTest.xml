@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.signalbot.engine.data.ExchangeSourcesTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-22T06:10:25.287Z" hostname="runnervm0hi8g" time="0.139">
+  <properties/>
+  <testcase name="binanceParsesAndBuildsUrl()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.052"/>
+  <testcase name="reportsEveryFailureWhenAllSourcesFail()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.036"/>
+  <testcase name="networkFailureIsRetried()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.005"/>
+  <testcase name="doesNotRetryClientErrors()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.007"/>
+  <testcase name="bybitIsReversedToOldestFirstWithCloseTime()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.002"/>
+  <testcase name="fallsBackToBybitWhenBinanceBansUs()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.001"/>
+  <testcase name="retriesServerErrorsWithBackoff()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.003"/>
+  <testcase name="rejectsUnsafeSymbols()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.001"/>
+  <testcase name="bybitRetCodeErrors()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.001"/>
+  <testcase name="honoursRetryAfterOnRateLimit()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.001"/>
+  <testcase name="givesUpAfterMaxAttempts()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.001"/>
+  <testcase name="bothSourcesAgreeOnTheSameCandles()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.002"/>
+  <testcase name="garbageBodyIsARetryableError()" classname="com.signalbot.engine.data.ExchangeSourcesTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
