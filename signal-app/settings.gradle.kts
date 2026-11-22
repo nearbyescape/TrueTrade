@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "signal-app"
 
 // :engine = the tested strategy engine (plain Kotlin). :app = the Android app that runs it.
-include(":engine", ":app")
+// :desktop = the desktop app (Windows installer), her break-and-retest strategy only.
+include(":engine", ":app", ":desktop")

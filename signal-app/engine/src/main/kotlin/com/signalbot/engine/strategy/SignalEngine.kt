@@ -341,6 +341,6 @@ class SignalEngine(val cfg: StrategyConfig = StrategyConfig()) {
 /** Price with sensible decimals: 91,250.5 / 2,650.25 / 31.42 / 0.5123 */
 fun formatPrice(p: Double): String {
     val a = abs(p)
-    val decimals = when { a >= 1000 -> 1; a >= 1 -> 2; else -> 4 }
+    val decimals = when { a >= 1000 -> 1; a >= 10 -> 2; a >= 1 -> 4; else -> 5 }
     return String.format(Locale.US, "%,.${decimals}f", p)
 }
